@@ -4,8 +4,8 @@
   "main": "./build/index.js",
   "license": "MIT",
   "scripts": {
-    "server": "node ./build/app.js",
-    "start": "tsc && nodemon ./build/app.js",
+    "server": "tsc && nodemon ./build/app.js",
+    "start": "node ./build/app.js",
     "ts:watch": "tsc -w",
     "build-doc": "apidoc -i src/ --silent"
   },
