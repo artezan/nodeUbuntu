@@ -1,0 +1,8 @@
+-#!/bin/sh      
+ssh jenkins@vps40731044 <<EOF        
+ cd /ubuntudemo/nodeUbuntu  
+ git pull       
+ npm install --production       
+ pm2 restart all
+ exit       
+EOF
