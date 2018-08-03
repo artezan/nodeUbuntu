@@ -2,7 +2,8 @@
 ssh jenkins@vps40731044 <<EOF        
  cd /ubuntudemo/nodeUbuntu  
  git pull       
- npm install --production       
+ npm install --production  
+ tsc
  pm2 restart all
  exit       
 EOF
