@@ -16,7 +16,7 @@
     ]
   },
   "apidoc": {
-    "name": "API-Consultores-SAP",
+    "name": "API-Doc-Consultores-SAP",
     "version": "0.1.0",
     "description": "Documentation for Consultores SAP",
     "url": "http://30.220.52.51/api/v1",
