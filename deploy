@@ -1,5 +1,5 @@
 -#!/bin/sh      
-ssh jenkins@vps40731044 <<EOF  
+ssh root@31.220.52.51 <<EOF  
  cd /ubuntudemo/nodeUbuntu  
  git pull       
  npm install --production  
