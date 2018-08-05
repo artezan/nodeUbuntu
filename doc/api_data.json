@@ -8,7 +8,7 @@
     "group": "Books",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/books/"
+        "url": "http://30.220.52.51/api/v1/books/"
       }
     ],
     "success": {
@@ -32,7 +32,7 @@
     "group": "Posts",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/posts/"
+        "url": "http://30.220.52.51/api/v1/posts/"
       }
     ],
     "success": {
@@ -87,7 +87,7 @@
     "groupTitle": "Users",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/users/:_id"
+        "url": "http://30.220.52.51/api/v1/users/:_id"
       }
     ]
   },
@@ -100,7 +100,7 @@
     "group": "Users",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/users/"
+        "url": "http://30.220.52.51/api/v1/users/"
       }
     ],
     "success": {
@@ -144,7 +144,7 @@
     ],
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/users/"
+        "url": "http://30.220.52.51/api/v1/users/"
       }
     ],
     "success": {
@@ -403,7 +403,7 @@
     "groupTitle": "Users",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/users/"
+        "url": "http://30.220.52.51/api/v1/users/"
       }
     ]
   },
@@ -517,7 +517,7 @@
     "groupTitle": "Users",
     "sampleRequest": [
       {
-        "url": "https://cesarapp12.herokuapp.com/api/v1/users/:_id"
+        "url": "http://30.220.52.51/api/v1/users/:_id"
       }
     ]
   }

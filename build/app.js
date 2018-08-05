@@ -7,6 +7,7 @@ debug("ts-express:server");
 const port = normalizePort(process.env.PORT || 3000);
 server_1.default.set("port", port);
 console.log(`Server listening on port ${port}`);
+// algo 2
 const server = http.createServer(server_1.default);
 server.listen(port);
 server.on("error", onError);

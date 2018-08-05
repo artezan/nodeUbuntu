@@ -16,11 +16,11 @@
     ]
   },
   "apidoc": {
-    "name": "cesar-users-api",
+    "name": "API-Consultores-SAP",
     "version": "0.1.0",
     "description": "Documentation for DemoApp",
-    "url": "https://cesarapp12.herokuapp.com/api/v1",
-    "sampleUrl": "https://cesarapp12.herokuapp.com/api/v1"
+    "url": "http://30.220.52.51/api/v1",
+    "sampleUrl": "http://30.220.52.51/api/v1"
   },
   "dependencies": {
     "actions-on-google": "^2.1.1",

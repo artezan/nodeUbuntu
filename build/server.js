@@ -24,7 +24,9 @@ class Server {
     }
     // application config
     config() {
-        const MONGO_URI = "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
+        const MONGO_URI = 
+        // "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
+        "mongodb://31.220.52.51:27017/";
         mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
         // express middleware
         this.app.use(bodyParser.urlencoded({ extended: true }));
