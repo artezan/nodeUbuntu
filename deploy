@@ -1,9 +1,9 @@
 -#!/bin/sh      
 ssh root@31.220.52.51 <<EOF  
- cd /ubuntudemo/nodeUbuntu  
- git pull       
- npm install --production  
- tsc
- pm2 restart all
+ cd app1/nodeUbuntu 
+ git fetch --all
+git reset --hard origin/master
+npm install
+npm run build-doc
  exit       
 EOF
