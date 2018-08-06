@@ -14,23 +14,21 @@ const TicketSchema = new mongoose_1.Schema({
     description: {
         type: String,
     },
-    costomerName: {
-        type: String
+    customer: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Customer"
     },
-    costomerLastName: {
-        type: String
-    },
-    consultantName: {
-        type: String
-    },
-    consultantLastName: {
-        type: String
+    consultant: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Consultant"
     },
     ranking: {
-        type: Number
+        type: Number,
+        default: 0
     },
     status: {
-        type: String
+        type: String,
+        default: "Pendiente"
     }
 });
 exports.default = mongoose_1.model("Ticket", TicketSchema);

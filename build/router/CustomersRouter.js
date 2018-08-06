@@ -123,7 +123,6 @@ class CustomersRouter {
         customer
             .save()
             .then(data => {
-            console.log(data);
             res.status(201).json({ data });
         })
             .catch(error => {

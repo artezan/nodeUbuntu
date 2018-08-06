@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const User_1 = require("../models/User");
+const Consultant_1 = require("../models/Consultant");
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} createdAt
@@ -24,10 +24,10 @@ class ConsultantRouter {
      * @api {GET} /users/ Request all
      * @apiVersion  0.1.0
      * @apiName get
-     * @apiGroup Users
+     * @apiGroup Consultant
      *
      *
-     * @apiSampleRequest /users/
+     * @apiSampleRequest /consultant/
      *
      * @apiSuccessExample {json} Success-Response a JSON-Array<user>:
      * {"data":[
@@ -35,9 +35,8 @@ class ConsultantRouter {
      * ]}
      */
     all(req, res) {
-        User_1.default.find()
-            .populate("posts")
-            .populate("books")
+        Consultant_1.default.find()
+            .populate("ticket")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -46,10 +45,10 @@ class ConsultantRouter {
         });
     }
     /**
-     * @api {GET} /users/:_id Request by Object Id
+     * @api {GET} /consultant/:_id Request by Object Id
      * @apiVersion  0.1.0
      * @apiName getById
-     * @apiGroup Users
+     * @apiGroup Consultant
      *
      *
      * @apiParam {ObjectId} _id Must be provided as QueryParam
@@ -57,7 +56,7 @@ class ConsultantRouter {
      * @apiExample Example usage:
      * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
      *
-     * @apiSampleRequest /users/
+     * @apiSampleRequest /consultant/
      *
      * @apiUse UserResponseParams
      *
@@ -65,9 +64,9 @@ class ConsultantRouter {
      * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ { "timestamp": "2018-03-29T13:44:27.979Z", "title": "Post1", "slug": "post1", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": false, "_id": "5abcedbbfb5dfb236c199e81", "__v": 0 }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
     oneById(req, res) {
-        const username = req.params.username;
-        User_1.default.findById(username)
-            .populate("books posts")
+        const consultantId = req.params.consultantId;
+        Consultant_1.default.findById(consultantId)
+            .populate("ticket")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -83,10 +82,10 @@ class ConsultantRouter {
           });*/
     }
     /**
-     * @api {POST} /users/ Request New
+     * @api {POST} /consultant/ Request New
      * @apiVersion  0.1.0
      * @apiName post
-     * @apiGroup Users
+     * @apiGroup Consultant
      *
      *
      * @apiParam {string} firstName
@@ -102,29 +101,23 @@ class ConsultantRouter {
      * @apiParamExample {json} Request-Example:
      * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
      *
-     * @apiUse UserResponseParams
+     * @apiUse ConsultantResponseParams
      *
      * @apiSuccessExample {json} Success-Response Created User:
      * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c175d4f5791f80c86742" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
     create(req, res) {
-        const firstName = req.body.firstName;
+        const name = req.body.name;
         const lastName = req.body.lastName;
-        const username = req.body.username;
-        const email = req.body.email;
         const password = req.body.password;
-        const posts = req.body.posts;
-        const books = req.body.books;
-        const user = new User_1.default({
-            firstName,
+        const description = req.body.description;
+        const consultant = new Consultant_1.default({
+            name,
             lastName,
-            username,
-            email,
             password,
-            posts,
-            books
+            description
         });
-        user
+        consultant
             .save()
             .then(data => {
             res.status(201).json({ data });
@@ -134,10 +127,10 @@ class ConsultantRouter {
         });
     }
     /**
-     * @api {PUT} /users/:_id Request Update
+     * @api {PUT} /consultant/:_id Request Update
      * @apiVersion  0.1.0
      * @apiName put
-     * @apiGroup Users
+     * @apiGroup Consultant
      *
      *
      * @apiParam {ObjectId} _id Must be placed as QueryParam
@@ -161,8 +154,8 @@ class ConsultantRouter {
      * { "data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname21", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c1d6d4f5791f80c86744" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
     update(req, res) {
-        const _id = req.params.username;
-        User_1.default.findByIdAndUpdate({ _id: _id }, req.body)
+        const _id = req.params.consultantId;
+        Consultant_1.default.findByIdAndUpdate({ _id: _id }, req.body)
             .then(data => {
             res.status(200).json({ data });
         })
@@ -171,10 +164,10 @@ class ConsultantRouter {
         });
     }
     /**
-     * @api {DELETE} /users/:_id Request  Deleted
+     * @api {DELETE} /consultant/:_id Request  Deleted
      * @apiVersion  0.1.0
      * @apiName deleteByToken
-     * @apiGroup Users
+     * @apiGroup Consultant
      *
      *
      * @apiParam {ObjectId} _id Must be placed as QueryParam
@@ -186,8 +179,8 @@ class ConsultantRouter {
      * {"data":true}
      */
     delete(req, res) {
-        const _id = req.params.username;
-        User_1.default.findByIdAndRemove({ _id: _id })
+        const _id = req.params.consultantId;
+        Consultant_1.default.findByIdAndRemove({ _id: _id })
             .then(() => {
             res.status(200).json({ data: true });
         })
@@ -198,10 +191,10 @@ class ConsultantRouter {
     // set up our routes
     routes() {
         this.router.get("/", this.all);
-        this.router.get("/:username", this.oneById);
+        this.router.get("/:consultantId", this.oneById);
         this.router.post("/", this.create);
-        this.router.put("/:username", this.update);
-        this.router.delete("/:username", this.delete);
+        this.router.put("/:consultantId", this.update);
+        this.router.delete("/:consultantId", this.delete);
     }
 }
 exports.ConsultantRouter = ConsultantRouter;

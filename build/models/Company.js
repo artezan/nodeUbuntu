@@ -11,14 +11,18 @@ const CompanySchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    customers: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "Customer"
-    },
-    consultant: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "Consultant"
-    }
+    customers: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Customer"
+        }],
+    consultant: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Consultant"
+        }],
+    tickets: [{
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Ticket"
+        }]
 });
 exports.default = mongoose_1.model("Company", CompanySchema);
 //# sourceMappingURL=Company.js.map

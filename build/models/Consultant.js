@@ -16,9 +16,13 @@ const ConsultantSchema = new mongoose_1.Schema({
         required: true
     },
     rankingAverage: {
-        type: Number
+        type: Number,
+        default: 0
     },
     password: {
+        type: String
+    },
+    description: {
         type: String
     },
     tickets: [{
