@@ -114,14 +114,14 @@ export class ConsultantRouter {
   public create(req: Request, res: Response): void {
     const name: string = req.body.name;
     const lastName: string = req.body.lastName;
-    const rankingAverage: number = req.body.rankingAverage;
     const password: string = req.body.password;
+    const description: string = req.body.description;
 
     const consultant = new Consultant({
       name,
       lastName,
-      rankingAverage,
       password,
+      description
     });
 
     consultant

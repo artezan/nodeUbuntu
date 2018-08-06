@@ -6,6 +6,7 @@ interface IConsultant extends Document {
   rankingAverage: number;
   password: string;
   timestamp: Date;
+  description: string;
 }
 // tslint:disable object-literal-sort-keys
 const ConsultantSchema: Schema = new Schema({
@@ -26,6 +27,9 @@ const ConsultantSchema: Schema = new Schema({
     default: 0
   },
   password: {
+    type: String
+  },
+  description: {
     type: String
   },
   tickets: [{
