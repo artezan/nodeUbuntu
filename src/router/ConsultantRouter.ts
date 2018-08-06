@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { ObjectId } from "../../node_modules/@types/bson";
 import Consultant, { IConsultant } from "../models/Consultant";
-import { ITicket } from "../models/Ticket";
+import Ticket, { ITicket } from "../models/Ticket";
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} createdAt
@@ -166,33 +166,44 @@ export class ConsultantRouter {
   }
   public updateRanking(req: Request, res: Response): void {
     const consultantId: string = req.params.consultantId;
-    const newtickets: ITicket[] = req.body.tickets;
-    Consultant.findById(consultantId)
-      .populate("ticket")
-      .then((data: IConsultant) => {
-        let rankingNewTickets = 0;
-      newtickets.forEach(newTicket => {
-      rankingNewTickets += newTicket.ranking;
-      });
-      let totalRanking = 0;
-       if ( data.tickets.length > 0) {
-         data.tickets.forEach(ticket => {
-          totalRanking += ticket.ranking;
-         });
-        }
-          const rankingAverage = (totalRanking + rankingNewTickets) / (data.tickets.length + newtickets.length);
-          Consultant.findByIdAndUpdate({ _id: consultantId }, {rankingAverage: rankingAverage} )
-      .then(data => {
-        res.status(200).json({ data });
+    Ticket.find()
+      .then(dataTicket => {
+        const idTickets: string[] = req.body.tickets;
+        const newtickets: ITicket[] = [];
+        idTickets.forEach(id => {
+          newtickets.push(dataTicket.find(item => item._id === id));
+        });
+
+        Consultant.findById(consultantId)
+          .populate("ticket")
+          .then((data: IConsultant) => {
+            let rankingNewTickets = 0;
+            newtickets.forEach(newTicket => {
+              rankingNewTickets += newTicket.ranking;
+            });
+            let totalRanking = 0;
+            if (data.tickets.length > 0) {
+              data.tickets.forEach(ticket => {
+                totalRanking += ticket.ranking;
+              });
+            }
+            const rankingAverage = (totalRanking + rankingNewTickets) / (data.tickets.length + newtickets.length);
+            Consultant.findByIdAndUpdate({ _id: consultantId }, { rankingAverage: rankingAverage })
+              .then(dataRes => {
+                res.status(200).json({ data: dataRes });
+              })
+              .catch(error => {
+                res.status(500).json({ error });
+              });
+          })
+          .catch(error => {
+            res.status(500).json({ error });
+          });
       })
       .catch(error => {
         res.status(500).json({ error });
       });
-        res.status(200).json({ data });
-      })
-      .catch(error => {
-        res.status(500).json({ error });
-      });
+
   }
   /**
    * @api {DELETE} /consultant/:_id Request  Deleted
