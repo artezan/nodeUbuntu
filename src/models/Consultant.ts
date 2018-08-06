@@ -22,7 +22,8 @@ const ConsultantSchema: Schema = new Schema({
     required: true
   },
   rankingAverage: {
-    type: Number
+    type: Number,
+    default: 0
   },
   password: {
     type: String

@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
-import User from "../models/User";
 import { ObjectId } from "../../node_modules/@types/bson";
+import Ticket from "../models/Ticket";
 /**
  * @apiDefine TicketsResponseParams
  * @apiSuccess {Date} createdAt
@@ -36,9 +36,9 @@ export class TicketsRouter {
    * ]}
    */
   public all(req: Request, res: Response): void {
-    User.find()
-      .populate("posts")
-      .populate("books")
+    Ticket.find()
+    .populate("customer")
+    .populate("consultant")
       .then(data => {
         res.status(200).json({ data });
       })
@@ -67,10 +67,11 @@ export class TicketsRouter {
    */
 
   public oneById(req: Request, res: Response): void {
-    const username: string = req.params.username;
+    const ticketId: string = req.params.ticketId;
 
-    User.findById(username)
-      .populate("books posts")
+    Ticket.findById(ticketId)
+    .populate("customer")
+    .populate("consultant")
       .then(data => {
         res.status(200).json({ data });
       })
@@ -101,7 +102,7 @@ export class TicketsRouter {
    * @apiParam {Books} books
    * @apiParam {ObjectId[]} book._id
    * @apiParam {Posts} posts
-   * @apiParam {ObjectId[]} post._id
+   * @apiParam {string} status •	Atendiendo. •	Cerrado. Pendiente
    *
    * @apiParamExample {json} Request-Example:
    * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
@@ -113,22 +114,16 @@ export class TicketsRouter {
    */
 
   public create(req: Request, res: Response): void {
-    const firstName: string = req.body.firstName;
-    const lastName: string = req.body.lastName;
-    const username: string = req.body.username;
-    const email: string = req.body.email;
-    const password: string = req.body.password;
-    const posts: string[] = req.body.posts;
-    const books: string[] = req.body.books;
+    const hours: number = req.body.hours;
+    const description: string = req.body.description;
+    const customer: string = req.body.customer;
+    const consultant: string = req.body.consultant;
 
-    const user = new User({
-      firstName,
-      lastName,
-      username,
-      email,
-      password,
-      posts,
-      books
+    const user = new Ticket({
+      hours,
+      description,
+      consultant,
+      customer
     });
 
     user
@@ -169,9 +164,9 @@ export class TicketsRouter {
    */
 
   public update(req: Request, res: Response): void {
-    const _id: string = req.params.username;
+    const _id: string = req.params.ticketId;
 
-    User.findByIdAndUpdate({ _id: _id }, req.body)
+    Ticket.findByIdAndUpdate({ _id: _id }, req.body)
       .then(data => {
         res.status(200).json({ data });
       })
@@ -196,9 +191,9 @@ export class TicketsRouter {
    */
 
   public delete(req: Request, res: Response): void {
-    const _id: string = req.params.username;
+    const _id: string = req.params.ticketId;
 
-    User.findByIdAndRemove({ _id: _id })
+    Ticket.findByIdAndRemove({ _id: _id })
       .then(() => {
         res.status(200).json({ data: true });
       })
@@ -210,9 +205,9 @@ export class TicketsRouter {
   // set up our routes
   public routes() {
     this.router.get("/", this.all);
-    this.router.get("/:username", this.oneById);
+    this.router.get("/:ticketId", this.oneById);
     this.router.post("/", this.create);
-    this.router.put("/:username", this.update);
-    this.router.delete("/:username", this.delete);
+    this.router.put("/:ticketId", this.update);
+    this.router.delete("/:ticketId", this.delete);
   }
 }

@@ -2,11 +2,9 @@ import { model, Schema, Document } from "mongoose";
 interface ITicket extends Document {
     hours: number;
     description: string;
-    costomerName: string;
-    costomerLastName: string;
+    customer: string;
     ranking: number;
-    consultantName: string;
-    consultantLastName: string;
+    consultant: string;
     timestamp: Date;
     status: string;
 }
@@ -23,23 +21,21 @@ const TicketSchema: Schema = new Schema({
     description: {
         type: String,
     },
-    costomerName: {
-        type: String
+    customer: {
+        type: Schema.Types.ObjectId,
+        ref: "Customer"
     },
-    costomerLastName: {
-        type: String
-    },
-    consultantName: {
-        type: String
-    },
-    consultantLastName: {
-        type: String
+    consultant: {
+        type: Schema.Types.ObjectId,
+        ref: "Consultant"
     },
     ranking: {
-        type: Number
+        type: Number,
+        default: 0
     },
     status: {
-        type: String
+        type: String,
+        default: "Pendiente"
     }
 });
 
