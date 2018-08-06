@@ -9,24 +9,25 @@ const helmet = require("helmet");
 const mongoose = require("mongoose");
 const logger = require("morgan");
 const BookRouter_1 = require("./router/BookRouter");
-const DialogFlow_1 = require("./router/DialogFlow");
 const PostRouter_1 = require("./router/PostRouter");
-const UserRouter_1 = require("./router/UserRouter");
+const TicketsRouter_1 = require("./router/TicketsRouter");
+const CustomersRouter_1 = require("./router/CustomersRouter");
+const ConsultantRouter_1 = require("./router/ConsultantRouter");
 class Server {
     constructor() {
         this.postRouter = new PostRouter_1.PostRouter();
-        this.userRouter = new UserRouter_1.UserRouter();
+        this.ticketsRouter = new TicketsRouter_1.TicketsRouter();
+        this.customersRouter = new CustomersRouter_1.CustomersRouter();
+        this.consultantsRouter = new ConsultantRouter_1.ConsultantRouter();
         this.BookRouter = new BookRouter_1.BookRouter();
-        this.dialogRouter = new DialogFlow_1.DialogFlow();
         this.app = express();
         this.config();
         this.routes();
     }
     // application config
     config() {
-        const MONGO_URI = 
-        // "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
-        "mongodb://31.220.52.51:27017/";
+        const MONGO_URI = "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
+        // "mongodb://31.220.52.51:27017/cesar";
         mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
         // express middleware
         this.app.use(bodyParser.urlencoded({ extended: true }));
@@ -55,9 +56,10 @@ class Server {
         const router = express.Router();
         this.app.use("/", router);
         this.app.use("/api/v1/posts", this.postRouter.router);
-        this.app.use("/api/v1/users", this.userRouter.router);
+        // this.app.use("/api/v1/consultants", this.consultantsRouter.router);
+        this.app.use("/api/v1/customers", this.customersRouter.router);
+        // this.app.use("/api/v1/tickets", this.ticketsRouter.router);
         this.app.use("/api/v1/books", this.BookRouter.router);
-        this.app.use("/api/v1/dialog", this.dialogRouter.router);
     }
 }
 // export

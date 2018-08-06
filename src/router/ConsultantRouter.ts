@@ -2,7 +2,7 @@ import { Request, Response, Router } from "express";
 import User from "../models/User";
 import { ObjectId } from "../../node_modules/@types/bson";
 /**
- * @apiDefine UserResponseParams
+ * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} createdAt
  * @apiSuccess {Date} [updatedAt]
  * @apiSuccess {ObjectId} _id
@@ -14,7 +14,7 @@ import { ObjectId } from "../../node_modules/@types/bson";
  * @apiSuccess {Books} books
  * @apiSuccess {Post} post
  */
-export class UserRouter {
+export class ConsultantRouter {
   public router: Router;
 
   constructor() {

@@ -1,0 +1,1 @@
+{"version":3,"file":"ConsultantsLogic.js","sourceRoot":"","sources":["../../src/logic/ConsultantsLogic.ts"],"names":[],"mappings":";;AAAA,MAAa,gBAAgB;;AACX,yBAAQ,GAAG;IACrB,IAAI,IAAI,CAAC,SAAS,EAAE;QAClB,OAAO,IAAI,CAAC,SAAS,CAAC;KACvB;SAAM;QACL,OAAO,CAAC,IAAI,CAAC,SAAS,GAAG,IAAI,IAAI,EAAE,CAAC,CAAC;KACtC;AACH,CAAC,CAAC;AAPR,4CAQC"}

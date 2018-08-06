@@ -8,15 +8,17 @@ import * as mongoose from "mongoose";
 import * as logger from "morgan";
 import * as path from "path";
 import { BookRouter } from "./router/BookRouter";
-import { DialogFlow } from "./router/DialogFlow";
 import { PostRouter } from "./router/PostRouter";
-import { UserRouter } from "./router/UserRouter";
+import { TicketsRouter } from "./router/TicketsRouter";
+import { CustomersRouter } from "./router/CustomersRouter";
+import { ConsultantRouter } from "./router/ConsultantRouter";
 
 class Server {
   public postRouter = new PostRouter();
-  public userRouter = new UserRouter();
+  public ticketsRouter = new TicketsRouter();
+  public customersRouter = new CustomersRouter();
+  public consultantsRouter = new ConsultantRouter();
   public BookRouter = new BookRouter();
-  public dialogRouter = new DialogFlow();
 
   // set app to be of type express.Application
   public app: express.Application;
@@ -30,8 +32,8 @@ class Server {
   // application config
   public config(): void {
     const MONGO_URI: string =
-      // "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
-      "mongodb://31.220.52.51:27017/";
+      "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
+      // "mongodb://31.220.52.51:27017/cesar";
     mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
 
     // express middleware
@@ -70,9 +72,10 @@ class Server {
 
     this.app.use("/", router);
     this.app.use("/api/v1/posts", this.postRouter.router);
-    this.app.use("/api/v1/users", this.userRouter.router);
+    // this.app.use("/api/v1/consultants", this.consultantsRouter.router);
+    this.app.use("/api/v1/customers", this.customersRouter.router);
+    // this.app.use("/api/v1/tickets", this.ticketsRouter.router);
     this.app.use("/api/v1/books", this.BookRouter.router);
-    this.app.use("/api/v1/dialog", this.dialogRouter.router);
   }
 }
 

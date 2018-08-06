@@ -31,11 +31,12 @@
     "cookie-parser": "1.4.3",
     "cors": "2.8.4",
     "dotenv": "^4.0.0",
-    "express": "4.16.2",
+    "express": "^4.16.2",
     "helmet": "3.9.0",
     "lodash": "4.17.4",
     "mongoose": "5.0.0-rc1",
-    "morgan": "1.9.0"
+    "morgan": "1.9.0",
+    "tsc": "^1.20150623.0"
   },
   "devDependencies": {
     "@types/body-parser": "1.16.8",
@@ -46,6 +47,6 @@
     "@types/node": "8.5.5",
     "nodemon": "1.14.7",
     "tslint": "5.10.0",
-    "typescript": "2.8.3"
+    "typescript": "^2.8.3"
   }
 }

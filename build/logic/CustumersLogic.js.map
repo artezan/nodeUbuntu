@@ -1,0 +1,1 @@
+{"version":3,"file":"CustumersLogic.js","sourceRoot":"","sources":["../../src/logic/CustumersLogic.ts"],"names":[],"mappings":";;AAAA,MAAa,aAAa;;AACR,sBAAQ,GAAG;IACrB,IAAI,IAAI,CAAC,SAAS,EAAE;QAClB,OAAO,IAAI,CAAC,SAAS,CAAC;KACvB;SAAM;QACL,OAAO,CAAC,IAAI,CAAC,SAAS,GAAG,IAAI,IAAI,EAAE,CAAC,CAAC;KACtC;AACH,CAAC,CAAC;AAPR,sCAQC"}
