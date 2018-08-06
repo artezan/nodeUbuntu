@@ -12,6 +12,7 @@ import { PostRouter } from "./router/PostRouter";
 import { TicketsRouter } from "./router/TicketsRouter";
 import { CustomersRouter } from "./router/CustomersRouter";
 import { ConsultantRouter } from "./router/ConsultantRouter";
+import { CompaniesRouter } from "./router/CompaniesRouter";
 
 class Server {
   public postRouter = new PostRouter();
@@ -19,6 +20,7 @@ class Server {
   public customersRouter = new CustomersRouter();
   public consultantsRouter = new ConsultantRouter();
   public BookRouter = new BookRouter();
+  public companiesRouter = new CompaniesRouter();
 
   // set app to be of type express.Application
   public app: express.Application;
@@ -72,6 +74,7 @@ class Server {
 
     this.app.use("/", router);
     this.app.use("/api/v1/posts", this.postRouter.router);
+    this.app.use("/api/v1/companies", this.companiesRouter.router);
     this.app.use("/api/v1/consultants", this.consultantsRouter.router);
     this.app.use("/api/v1/customers", this.customersRouter.router);
     this.app.use("/api/v1/tickets", this.ticketsRouter.router);

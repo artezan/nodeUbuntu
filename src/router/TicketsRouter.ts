@@ -119,14 +119,14 @@ export class TicketsRouter {
     const customer: string = req.body.customer;
     const consultant: string = req.body.consultant;
 
-    const user = new Ticket({
+    const ticket = new Ticket({
       hours,
       description,
       consultant,
       customer
     });
 
-    user
+    ticket
       .save()
       .then(data => {
         res.status(201).json({ data });
