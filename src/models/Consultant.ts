@@ -1,8 +1,9 @@
 import { model, Schema, Document } from "mongoose";
-interface IConsultant extends Document {
+import { ITicket } from "./Ticket";
+export interface IConsultant extends Document {
   name: any;
   lastName: string;
-  tickets: any[];
+  tickets: ITicket[];
   rankingAverage: number;
   password: string;
   timestamp: Date;

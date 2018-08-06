@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { ObjectId } from "../../node_modules/@types/bson";
-import Consultant from "../models/Consultant";
+import Consultant, { IConsultant } from "../models/Consultant";
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} createdAt
@@ -76,14 +76,6 @@ export class ConsultantRouter {
       .catch(error => {
         res.status(500).json({ error });
       });
-
-    /*User.findOne({ username }).select('lastName')
-      .then((data) => {
-        res.status(200).json({ data });
-      })
-      .catch((error) => {
-        res.status(500).json({ error });
-      });*/
   }
   /**
    * @api {POST} /consultant/ Request New
@@ -172,6 +164,35 @@ export class ConsultantRouter {
         res.status(500).json({ error });
       });
   }
+  public updateRanking(req: Request, res: Response): void {
+    const consultantId: string = req.params.consultantId;
+    const ranking: number = req.body.ranking;
+
+
+    Consultant.findById(consultantId)
+      .populate("ticket")
+      .then((data: IConsultant) => {
+       if ( data.tickets.length > 0) {
+        let totalRanking = ranking;
+         data.tickets.forEach(ticket => {
+          totalRanking += ticket.ranking;
+         });
+          const rankingAverage = totalRanking / data.tickets.length;
+          Consultant.findByIdAndUpdate({ _id: consultantId }, {rankingAverage: rankingAverage} )
+      .then(data => {
+        res.status(200).json({ data });
+      })
+      .catch(error => {
+        res.status(500).json({ error });
+      });
+       }
+
+        res.status(200).json({ data });
+      })
+      .catch(error => {
+        res.status(500).json({ error });
+      });
+  }
   /**
    * @api {DELETE} /consultant/:_id Request  Deleted
    * @apiVersion  0.1.0
@@ -205,6 +226,7 @@ export class ConsultantRouter {
     this.router.get("/", this.all);
     this.router.get("/:consultantId", this.oneById);
     this.router.post("/", this.create);
+    this.router.post("/consultantId", this.updateRanking);
     this.router.put("/:consultantId", this.update);
     this.router.delete("/:consultantId", this.delete);
   }

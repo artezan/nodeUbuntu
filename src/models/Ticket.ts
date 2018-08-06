@@ -1,5 +1,5 @@
 import { model, Schema, Document } from "mongoose";
-interface ITicket extends Document {
+export interface ITicket extends Document {
     hours: number;
     description: string;
     customer: string;
