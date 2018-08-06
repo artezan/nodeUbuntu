@@ -72,9 +72,9 @@ class Server {
 
     this.app.use("/", router);
     this.app.use("/api/v1/posts", this.postRouter.router);
-    // this.app.use("/api/v1/consultants", this.consultantsRouter.router);
+    this.app.use("/api/v1/consultants", this.consultantsRouter.router);
     this.app.use("/api/v1/customers", this.customersRouter.router);
-    // this.app.use("/api/v1/tickets", this.ticketsRouter.router);
+    this.app.use("/api/v1/tickets", this.ticketsRouter.router);
     this.app.use("/api/v1/books", this.BookRouter.router);
   }
 }
