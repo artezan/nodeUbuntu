@@ -158,24 +158,28 @@ class ConsultantRouter {
     }
     updateRanking(req, res) {
         const consultantId = req.params.consultantId;
-        const ranking = req.body.ranking;
+        const newtickets = req.body.tickets;
         Consultant_1.default.findById(consultantId)
             .populate("ticket")
             .then((data) => {
+            let rankingNewTickets = 0;
+            newtickets.forEach(newTicket => {
+                rankingNewTickets += newTicket.ranking;
+            });
+            let totalRanking = 0;
             if (data.tickets.length > 0) {
-                let totalRanking = ranking;
                 data.tickets.forEach(ticket => {
                     totalRanking += ticket.ranking;
                 });
-                const rankingAverage = totalRanking / data.tickets.length;
-                Consultant_1.default.findByIdAndUpdate({ _id: consultantId }, { rankingAverage: rankingAverage })
-                    .then(data => {
-                    res.status(200).json({ data });
-                })
-                    .catch(error => {
-                    res.status(500).json({ error });
-                });
             }
+            const rankingAverage = (totalRanking + rankingNewTickets) / (data.tickets.length + newtickets.length);
+            Consultant_1.default.findByIdAndUpdate({ _id: consultantId }, { rankingAverage: rankingAverage })
+                .then(data => {
+                res.status(200).json({ data });
+            })
+                .catch(error => {
+                res.status(500).json({ error });
+            });
             res.status(200).json({ data });
         })
             .catch(error => {

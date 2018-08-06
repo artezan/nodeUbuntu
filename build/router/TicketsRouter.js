@@ -113,13 +113,13 @@ class TicketsRouter {
         const description = req.body.description;
         const customer = req.body.customer;
         const consultant = req.body.consultant;
-        const user = new Ticket_1.default({
+        const ticket = new Ticket_1.default({
             hours,
             description,
             consultant,
             customer
         });
-        user
+        ticket
             .save()
             .then(data => {
             res.status(201).json({ data });

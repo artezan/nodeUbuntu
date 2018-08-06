@@ -13,6 +13,7 @@ const PostRouter_1 = require("./router/PostRouter");
 const TicketsRouter_1 = require("./router/TicketsRouter");
 const CustomersRouter_1 = require("./router/CustomersRouter");
 const ConsultantRouter_1 = require("./router/ConsultantRouter");
+const CompaniesRouter_1 = require("./router/CompaniesRouter");
 class Server {
     constructor() {
         this.postRouter = new PostRouter_1.PostRouter();
@@ -20,6 +21,7 @@ class Server {
         this.customersRouter = new CustomersRouter_1.CustomersRouter();
         this.consultantsRouter = new ConsultantRouter_1.ConsultantRouter();
         this.BookRouter = new BookRouter_1.BookRouter();
+        this.companiesRouter = new CompaniesRouter_1.CompaniesRouter();
         this.app = express();
         this.config();
         this.routes();
@@ -56,6 +58,7 @@ class Server {
         const router = express.Router();
         this.app.use("/", router);
         this.app.use("/api/v1/posts", this.postRouter.router);
+        this.app.use("/api/v1/companies", this.companiesRouter.router);
         this.app.use("/api/v1/consultants", this.consultantsRouter.router);
         this.app.use("/api/v1/customers", this.customersRouter.router);
         this.app.use("/api/v1/tickets", this.ticketsRouter.router);
