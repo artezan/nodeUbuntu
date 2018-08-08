@@ -1,5 +1,6 @@
 import Customer, { ICustomer } from "../models/Customer";
 import { ObjectId } from "mongodb";
+import { ITicket } from "../models/Ticket";
 
 export class CustmersLogic {
   public static Instance = function (): CustmersLogic {
@@ -9,35 +10,42 @@ export class CustmersLogic {
       return (this._instance = new this());
     }
   };
-  public addTicketToCustomer(ticketId, customerId): void {
-    Customer.findById(customerId).populate("tickets")
-    .then((customer: ICustomer) => {
-    const isFind =  customer.tickets.findIndex(t =>  new ObjectId(t._id).toString() === ticketId );
-    if (isFind === -1) {
-      customer.tickets.push(ticketId);
-      customer.save();
-    }
-     })
+  public addTicketToCustomer(ticket: ITicket, customertId): void {
+    Customer.findById(customertId).populate("tickets")
+      .then((customer: ICustomer) => {
+        const indexFind = customer.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString());
+        if (indexFind === -1) {
+          customer.tickets.push(ticket);
+        } else {
+          customer.tickets.splice(indexFind, 1);
+          customer.tickets.push(ticket);
+        }
+        customer.save();
+     this.calculateTotalHours(customer._id);
+      })
       .catch();
   }
-  public changeTicketToCustomer (ticketId, newCustomerId, oldCustomerId): void {
+  public changeTicketToCustomer (ticket: ITicket, newCustomerId, oldCustomerId): void {
     // eliminar del viejo
     Customer.findById(oldCustomerId).populate("tickets")
     .then((oldCustomer: ICustomer) => {
-      const indexFind =  oldCustomer.tickets.findIndex(t =>  new ObjectId(t._id).toString() === ticketId );
+      const indexFind =  oldCustomer.tickets.findIndex(t =>  new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString() );
       if (indexFind !== -1) {
         oldCustomer.tickets.splice(indexFind, 1);
         oldCustomer.save();
+        this.calculateTotalHours(oldCustomer._id);
       }
     })
     .catch();
     // add al neuvo
     Customer.findById(newCustomerId).populate("tickets")
     .then((newCustomer: ICustomer) => {
-      const indexFind =  newCustomer.tickets.findIndex(t =>  new ObjectId(t._id).toString() === ticketId );
+      const indexFind =  newCustomer.tickets.findIndex(t =>  new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString() );
       if (indexFind === -1) {
-        newCustomer.tickets.push(ticketId);
+        newCustomer.tickets.push(ticket);
         newCustomer.save();
+        this.calculateTotalHours(newCustomer._id);
       }
     })
     .catch();
@@ -49,8 +57,24 @@ export class CustmersLogic {
         if (indexFind !== -1) {
           customer.tickets.splice(indexFind, 1);
           customer.save();
+        this.calculateTotalHours(customer._id);
+
         }
       });
+    });
+  }
+  private calculateTotalHours(customerId) {
+    Customer.findById(customerId).populate("tickets").then(customer => {
+      let sumTotalHours = 0;
+      if (customer.tickets.length > 0) {
+        customer.tickets.forEach(t => {
+          sumTotalHours += t.hours;
+        });
+        customer.totalHours = sumTotalHours;
+      } else {
+        customer.totalHours = 0;
+      }
+      customer.save();
     });
   }
 }

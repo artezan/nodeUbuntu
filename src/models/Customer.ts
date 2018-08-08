@@ -5,7 +5,7 @@ export interface ICustomer extends Document {
   logo: string;
   name: any;
   adress: string;
-  tickets: any[];
+  tickets: ITicket[];
   totalHours: number;
   phone: number;
   password: string;
@@ -47,7 +47,8 @@ const CustomerSchema: Schema = new Schema({
   },
   tickets: [{
     type: Schema.Types.ObjectId,
-    ref: "Ticket"
+    ref: "Ticket",
+    default: []
   }],
   companyId: {
     type: Schema.Types.ObjectId,

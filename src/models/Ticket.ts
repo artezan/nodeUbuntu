@@ -1,16 +1,20 @@
 import { model, Schema, Document } from "mongoose";
+import { IConsultant } from "./Consultant";
+import { ICustomer } from "./Customer";
 export interface ITicket extends Document {
     hours: number;
     description: string;
-    customer: string;
+    customer: ICustomer;
     ranking: number;
-    consultant: string;
+    consultant: IConsultant;
     timestamp: Date;
     status: string;
-  companyId: string;
+    companyId: string;
+    cost: number;
+    isPay: boolean;
 
 }
-// tslint:disable object-literal-sort-keys
+// Cambiar Router !!!!!!
 const TicketSchema: Schema = new Schema({
     timestamp: {
         type: Date,
@@ -35,14 +39,22 @@ const TicketSchema: Schema = new Schema({
         type: Number,
         default: 0
     },
+    cost: {
+        type: Number,
+        default: 0
+    },
     status: {
         type: String,
         default: "Pendiente"
     },
+    isPay: {
+        type: Boolean,
+        default: false
+    },
     companyId: {
         type: Schema.Types.ObjectId,
         ref: "Company"
-      }
+    }
 });
-// probar
+
 export default model<ITicket>("Ticket", TicketSchema, "Ticket");

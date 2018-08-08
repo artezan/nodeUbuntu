@@ -114,8 +114,8 @@ class TicketsRouter {
     create(req, res) {
         const hours = req.body.hours;
         const description = req.body.description;
-        const customer = req.body.customer;
-        const consultant = req.body.consultant;
+        const customer = req.body.customerId;
+        const consultant = req.body.consultantId;
         const companyId = req.body.companyId;
         const ticket = new Ticket_1.default({
             hours,
@@ -124,15 +124,15 @@ class TicketsRouter {
             customer,
             companyId
         });
-        if (customer) {
-            CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(ticket._id, customer);
-        }
-        if (consultant) {
-            ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(ticket._id, consultant);
-        }
         ticket
             .save()
             .then(data => {
+            if (customer) {
+                CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(data, customer);
+            }
+            if (consultant) {
+                ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(data, consultant);
+            }
             res.status(201).json({ data });
         })
             .catch(error => {
@@ -168,17 +168,15 @@ class TicketsRouter {
      */
     update(req, res) {
         const _id = req.params.ticketId;
-        const customer = req.body.customer;
-        const consultant = req.body.consultant;
-        if (customer) {
-            CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(_id, customer);
-        }
-        if (consultant) {
-            ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(_id, consultant);
-        }
-        ConsultantsLogic_1.ConsultantsLogic.Instance().calculateAvgRatingById(_id);
-        Ticket_1.default.findByIdAndUpdate({ _id: _id }, req.body)
-            .then(() => {
+        Ticket_1.default.findByIdAndUpdate({ _id: _id }, req.body).then(() => {
+            Ticket_1.default.findById(_id).then(ticket => {
+                if (ticket.consultant) {
+                    ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(ticket, ticket.consultant);
+                }
+                if (ticket.customer) {
+                    CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(ticket, ticket.customer);
+                }
+            }).catch();
             res.status(200).json({ data: true });
         })
             .catch(error => {
@@ -214,28 +212,31 @@ class TicketsRouter {
     }
     changeTicket(req, res) {
         const ticketId = req.params.ticketId;
-        const newCustomer = req.body.newCustomer;
-        const oldCustomer = req.body.oldCustomer;
-        const newConsultant = req.body.newConsultant;
-        const oldConsultant = req.body.oldConsultant;
+        const newCustomer = req.body.newCustomerId;
+        const oldCustomer = req.body.oldCustomerId;
+        const newConsultant = req.body.newConsultantId;
+        const oldConsultant = req.body.oldConsultantId;
         if (newCustomer && oldCustomer && !newConsultant && !oldConsultant) {
-            CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticketId, newCustomer, oldCustomer);
-            Ticket_1.default.findById(ticketId).then((ticket) => {
-                ticket.customer = newCustomer;
-                ticket.save();
-            }).catch();
+            Ticket_1.default.findByIdAndUpdate({ _id: ticketId }, { customer: newCustomer }).then(() => {
+                Ticket_1.default.findById(ticketId).then(ticket => {
+                    CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);
+                }).catch();
+            });
         }
         if (newConsultant && oldConsultant && !newCustomer && !oldCustomer) {
-            ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticketId, newConsultant, oldConsultant);
-            Ticket_1.default.findById(ticketId).then((ticket) => {
-                ticket.consultant = newConsultant;
-                ticket.save();
-            }).catch();
+            Ticket_1.default.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
+                Ticket_1.default.findById(ticketId).then(ticket => {
+                    ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
+                }).catch();
+            });
         }
         if (newConsultant && oldConsultant && newCustomer && oldCustomer) {
-            ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticketId, newConsultant, oldConsultant);
-            CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticketId, newCustomer, oldCustomer);
-            Ticket_1.default.findByIdAndUpdate(ticketId, { customer: newCustomer, consultant: newConsultant });
+            Ticket_1.default.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
+                Ticket_1.default.findById(ticketId).then(ticket => {
+                    ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
+                    CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);
+                }).catch();
+            });
         }
         res.status(200).json({ data: true });
     }

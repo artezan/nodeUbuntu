@@ -26,15 +26,23 @@ const TicketSchema = new mongoose_1.Schema({
         type: Number,
         default: 0
     },
+    cost: {
+        type: Number,
+        default: 0
+    },
     status: {
         type: String,
         default: "Pendiente"
+    },
+    isPay: {
+        type: Boolean,
+        default: false
     },
     companyId: {
         type: mongoose_1.Schema.Types.ObjectId,
         ref: "Company"
     }
 });
-// probar 
+// probar
 exports.default = mongoose_1.model("Ticket", TicketSchema, "Ticket");
 //# sourceMappingURL=Ticket.js.map

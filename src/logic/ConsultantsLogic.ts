@@ -1,7 +1,7 @@
 import Consultant, { IConsultant } from "../models/Consultant";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
-import Ticket from "../models/Ticket";
+import Ticket, { ITicket } from "../models/Ticket";
 
 export class ConsultantsLogic {
   public static Instance = function (): ConsultantsLogic {
@@ -11,25 +11,28 @@ export class ConsultantsLogic {
       return (this._instance = new this());
     }
   };
-  public addTicketToConsultant(ticketId: string, consultantId): void {
+  public addTicketToConsultant(ticket: ITicket, consultantId): void {
     Consultant.findById(consultantId).populate("tickets")
       .then((consultant: IConsultant) => {
-        const isFind = consultant.tickets.findIndex(t => new ObjectId(t._id).toString() === (ticketId));
-        if (isFind === -1) {
-          Ticket.findById(ticketId).then( ticket => {
-            consultant.tickets.push((ticket._id));
-          consultant.save();
-          this.calculateAvgRating(consultant._id);
-          });
+        const indexFind = consultant.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString());
+        if (indexFind === -1) {
+          consultant.tickets.push(ticket);
+        } else {
+          consultant.tickets.splice(indexFind, 1);
+          consultant.tickets.push(ticket);
         }
+       consultant.save();
+       this.calculateAvgRating(consultant._id);
       })
       .catch();
   }
-  public changeTicketToConsultant(ticketId, newConsultantId, oldConsultantId): void {
+  public changeTicketToConsultant(ticket: ITicket, newConsultantId, oldConsultantId): void {
     // eliminar del viejo
     Consultant.findById(oldConsultantId).populate("tickets")
       .then((oldConsultant: IConsultant) => {
-        const indexFind = oldConsultant.tickets.findIndex(t => new ObjectId(t._id).toString() === ticketId);
+        const indexFind = oldConsultant.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString());
         if (indexFind !== -1) {
           oldConsultant.tickets.splice(indexFind, 1);
           oldConsultant.save();
@@ -37,12 +40,13 @@ export class ConsultantsLogic {
         }
       })
       .catch();
-    // add al neuvo
+    // add al nuevo
     Consultant.findById(newConsultantId).populate("tickets")
       .then((newConsultant: IConsultant) => {
-        const indexFind = newConsultant.tickets.findIndex(t => new ObjectId(t._id).toString() === ticketId);
+        const indexFind = newConsultant.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === new ObjectId(ticket._id).toString());
         if (indexFind === -1) {
-          newConsultant.tickets.push(ticketId);
+          newConsultant.tickets.push(ticket);
           newConsultant.save();
           this.calculateAvgRating(newConsultant._id);
         }
@@ -52,7 +56,8 @@ export class ConsultantsLogic {
   public removeTicket(ticketId) {
     Consultant.find().populate("tickets").then(consultants => {
       consultants.forEach(consultant => {
-        const indexFind = consultant.tickets.findIndex(t => new ObjectId(t._id).toString() === ticketId);
+        const indexFind = consultant.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === ticketId);
         if (indexFind !== -1) {
           consultant.tickets.splice(indexFind, 1);
           consultant.save();
@@ -63,31 +68,28 @@ export class ConsultantsLogic {
   }
   private calculateAvgRating(consultantId): void {
     Consultant.findById(consultantId).populate("tickets").then(consultant => {
-      console.log(consultant)
+      let sumTotalRanking = 0;
       if (consultant.tickets.length > 0) {
-        let sumTotalRanking = 0;
-      consultant.tickets.forEach((t) => {
-        sumTotalRanking += t.ranking;
-      });
-      console.log("SUMA" + sumTotalRanking)
-      if (sumTotalRanking > 0) {
-        consultant.rankingAverage = sumTotalRanking / consultant.tickets.length;
-      } else {
-      }
-      consultant.save();
+        consultant.tickets.forEach((t) => {
+          sumTotalRanking += t.ranking;
+        });
+        if (sumTotalRanking > 0) {
+          consultant.rankingAverage = sumTotalRanking / consultant.tickets.length;
+        } else {
+        }
+        consultant.save();
       } else if (consultant.tickets.length === 0) {
         consultant.rankingAverage = 0;
-      consultant.save();
+        consultant.save();
       }
     });
   }
   public calculateAvgRatingById(ticketId) {
     Consultant.find().populate("tickets").then(consultants => {
       consultants.forEach(consultant => {
-        const indexFind = consultant.tickets.findIndex(t => new ObjectId(t._id).toString() === ticketId);
+        const indexFind = consultant.tickets
+        .findIndex(t => new ObjectId(t._id).toString() === ticketId);
         if (indexFind !== -1) {
-      console.log("Algo")
-
           this.calculateAvgRating(consultant._id);
         }
       });

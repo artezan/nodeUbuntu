@@ -8,19 +8,15 @@ const express = require("express");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const logger = require("morgan");
-const BookRouter_1 = require("./router/BookRouter");
-const PostRouter_1 = require("./router/PostRouter");
 const TicketsRouter_1 = require("./router/TicketsRouter");
 const CustomersRouter_1 = require("./router/CustomersRouter");
 const ConsultantRouter_1 = require("./router/ConsultantRouter");
 const CompaniesRouter_1 = require("./router/CompaniesRouter");
 class Server {
     constructor() {
-        this.postRouter = new PostRouter_1.PostRouter();
         this.ticketsRouter = new TicketsRouter_1.TicketsRouter();
         this.customersRouter = new CustomersRouter_1.CustomersRouter();
         this.consultantsRouter = new ConsultantRouter_1.ConsultantRouter();
-        this.BookRouter = new BookRouter_1.BookRouter();
         this.companiesRouter = new CompaniesRouter_1.CompaniesRouter();
         this.app = express();
         this.config();
@@ -28,9 +24,8 @@ class Server {
     }
     // application config
     config() {
-        const MONGO_URI = 
-        // "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
-        "mongodb://31.220.52.51:27017/db";
+        const MONGO_URI = "mongodb://cesar:180292@ds117469.mlab.com:17469/cesar";
+        // "mongodb://31.220.52.51:27017/db";
         mongoose.connect(MONGO_URI || process.env.MONGODB_URI);
         // express middleware
         this.app.use(bodyParser.urlencoded({ extended: true }));
@@ -58,12 +53,10 @@ class Server {
     routes() {
         const router = express.Router();
         this.app.use("/", router);
-        this.app.use("/api/v1/posts", this.postRouter.router);
         this.app.use("/api/v1/companies", this.companiesRouter.router);
         this.app.use("/api/v1/consultants", this.consultantsRouter.router);
         this.app.use("/api/v1/customers", this.customersRouter.router);
         this.app.use("/api/v1/tickets", this.ticketsRouter.router);
-        this.app.use("/api/v1/books", this.BookRouter.router);
     }
 }
 // export

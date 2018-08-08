@@ -27,7 +27,8 @@ const ConsultantSchema = new mongoose_1.Schema({
     },
     tickets: [{
             type: mongoose_1.Schema.Types.ObjectId,
-            ref: "Ticket"
+            ref: "Ticket",
+            default: []
         }],
     companyId: {
         type: mongoose_1.Schema.Types.ObjectId,

@@ -37,7 +37,8 @@ const ConsultantSchema: Schema = new Schema({
   },
   tickets: [{
     type: Schema.Types.ObjectId,
-    ref: "Ticket"
+    ref: "Ticket",
+    default: []
   }],
   companyId: {
     type: Schema.Types.ObjectId,
