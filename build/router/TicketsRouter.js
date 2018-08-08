@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Ticket_1 = require("../models/Ticket");
+const CustumersLogic_1 = require("../logic/CustumersLogic");
+const ConsultantsLogic_1 = require("../logic/ConsultantsLogic");
 /**
  * @apiDefine TicketsResponseParams
  * @apiSuccess {Date} createdAt
@@ -35,7 +37,8 @@ class TicketsRouter {
      * ]}
      */
     all(req, res) {
-        Ticket_1.default.find()
+        const companyId = req.params.companyId;
+        Ticket_1.default.find({ companyId: companyId })
             .populate("customer")
             .populate("consultant")
             .then(data => {
@@ -113,12 +116,20 @@ class TicketsRouter {
         const description = req.body.description;
         const customer = req.body.customer;
         const consultant = req.body.consultant;
+        const companyId = req.body.companyId;
         const ticket = new Ticket_1.default({
             hours,
             description,
             consultant,
-            customer
+            customer,
+            companyId
         });
+        if (customer) {
+            CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(ticket._id, customer);
+        }
+        if (consultant) {
+            ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(ticket._id, consultant);
+        }
         ticket
             .save()
             .then(data => {
@@ -157,9 +168,18 @@ class TicketsRouter {
      */
     update(req, res) {
         const _id = req.params.ticketId;
+        const customer = req.body.customer;
+        const consultant = req.body.consultant;
+        if (customer) {
+            CustumersLogic_1.CustmersLogic.Instance().addTicketToCustomer(_id, customer);
+        }
+        if (consultant) {
+            ConsultantsLogic_1.ConsultantsLogic.Instance().addTicketToConsultant(_id, consultant);
+        }
+        ConsultantsLogic_1.ConsultantsLogic.Instance().calculateAvgRatingById(_id);
         Ticket_1.default.findByIdAndUpdate({ _id: _id }, req.body)
-            .then(data => {
-            res.status(200).json({ data });
+            .then(() => {
+            res.status(200).json({ data: true });
         })
             .catch(error => {
             res.status(500).json({ error });
@@ -184,17 +204,47 @@ class TicketsRouter {
         const _id = req.params.ticketId;
         Ticket_1.default.findByIdAndRemove({ _id: _id })
             .then(() => {
+            CustumersLogic_1.CustmersLogic.Instance().removeTicket(_id);
+            ConsultantsLogic_1.ConsultantsLogic.Instance().removeTicket(_id);
             res.status(200).json({ data: true });
         })
             .catch(error => {
             res.status(500).json({ error });
         });
     }
+    changeTicket(req, res) {
+        const ticketId = req.params.ticketId;
+        const newCustomer = req.body.newCustomer;
+        const oldCustomer = req.body.oldCustomer;
+        const newConsultant = req.body.newConsultant;
+        const oldConsultant = req.body.oldConsultant;
+        if (newCustomer && oldCustomer && !newConsultant && !oldConsultant) {
+            CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticketId, newCustomer, oldCustomer);
+            Ticket_1.default.findById(ticketId).then((ticket) => {
+                ticket.customer = newCustomer;
+                ticket.save();
+            }).catch();
+        }
+        if (newConsultant && oldConsultant && !newCustomer && !oldCustomer) {
+            ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticketId, newConsultant, oldConsultant);
+            Ticket_1.default.findById(ticketId).then((ticket) => {
+                ticket.consultant = newConsultant;
+                ticket.save();
+            }).catch();
+        }
+        if (newConsultant && oldConsultant && newCustomer && oldCustomer) {
+            ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticketId, newConsultant, oldConsultant);
+            CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticketId, newCustomer, oldCustomer);
+            Ticket_1.default.findByIdAndUpdate(ticketId, { customer: newCustomer, consultant: newConsultant });
+        }
+        res.status(200).json({ data: true });
+    }
     // set up our routes
     routes() {
-        this.router.get("/", this.all);
-        this.router.get("/:ticketId", this.oneById);
-        this.router.post("/", this.create);
+        this.router.get("/bycompanyid/:companyId", this.all);
+        this.router.get("/byticketid/:ticketId", this.oneById);
+        this.router.post("/newticket", this.create);
+        this.router.post("/changeticket/:ticketId", this.changeTicket);
         this.router.put("/:ticketId", this.update);
         this.router.delete("/:ticketId", this.delete);
     }

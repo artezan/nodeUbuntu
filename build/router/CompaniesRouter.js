@@ -36,9 +36,6 @@ class CompaniesRouter {
      */
     all(req, res) {
         Company_1.default.find()
-            .populate("customer")
-            .populate("consultant")
-            .populate("ticket")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -68,9 +65,6 @@ class CompaniesRouter {
     oneById(req, res) {
         const companyId = req.params.companyId;
         Company_1.default.findById(companyId)
-            .populate("customer")
-            .populate("consultant")
-            .populate("ticket")
             .then(data => {
             res.status(200).json({ data });
         })

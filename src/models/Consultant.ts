@@ -3,11 +3,13 @@ import { ITicket } from "./Ticket";
 export interface IConsultant extends Document {
   name: any;
   lastName: string;
-  tickets: ITicket[];
+  tickets: any[];
   rankingAverage: number;
   password: string;
   timestamp: Date;
   description: string;
+  companyId: string;
+
 }
 // tslint:disable object-literal-sort-keys
 const ConsultantSchema: Schema = new Schema({
@@ -37,6 +39,10 @@ const ConsultantSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Ticket"
   }],
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: "Company"
+  }
 });
 
 export default model<IConsultant>("Consultant", ConsultantSchema);

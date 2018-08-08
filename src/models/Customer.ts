@@ -1,5 +1,6 @@
 import { model, Schema, Document } from "mongoose";
-interface ICustomer extends Document {
+import { ITicket } from "./Ticket";
+export interface ICustomer extends Document {
   timestamp: Date;
   logo: string;
   name: any;
@@ -10,6 +11,7 @@ interface ICustomer extends Document {
   password: string;
   email: string;
   workArea: string;
+  companyId: string;
 }
 // tslint:disable object-literal-sort-keys
 const CustomerSchema: Schema = new Schema({
@@ -47,6 +49,10 @@ const CustomerSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Ticket"
   }],
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: "Company"
+  }
 });
 
 export default model<ICustomer>("Customer", CustomerSchema);

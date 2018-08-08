@@ -37,9 +37,6 @@ export class CompaniesRouter {
      */
     public all(req: Request, res: Response): void {
         Company.find()
-            .populate("customer")
-            .populate("consultant")
-            .populate("ticket")
             .then(data => {
                 res.status(200).json({ data });
             })
@@ -71,9 +68,6 @@ export class CompaniesRouter {
         const companyId: string = req.params.companyId;
 
         Company.findById(companyId)
-            .populate("customer")
-            .populate("consultant")
-            .populate("ticket")
             .then(data => {
                 res.status(200).json({ data });
             })

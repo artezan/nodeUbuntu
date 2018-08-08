@@ -7,6 +7,8 @@ export interface ITicket extends Document {
     consultant: string;
     timestamp: Date;
     status: string;
+  companyId: string;
+
 }
 // tslint:disable object-literal-sort-keys
 const TicketSchema: Schema = new Schema({
@@ -36,7 +38,11 @@ const TicketSchema: Schema = new Schema({
     status: {
         type: String,
         default: "Pendiente"
-    }
+    },
+    companyId: {
+        type: Schema.Types.ObjectId,
+        ref: "Company"
+      }
 });
-
-export default model<ITicket>("Ticket", TicketSchema);
+// probar
+export default model<ITicket>("Ticket", TicketSchema, "Ticket");

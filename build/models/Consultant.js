@@ -29,6 +29,10 @@ const ConsultantSchema = new mongoose_1.Schema({
             type: mongoose_1.Schema.Types.ObjectId,
             ref: "Ticket"
         }],
+    companyId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Company"
+    }
 });
 exports.default = mongoose_1.model("Consultant", ConsultantSchema);
 //# sourceMappingURL=Consultant.js.map

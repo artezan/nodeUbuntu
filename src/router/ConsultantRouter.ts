@@ -37,8 +37,9 @@ export class ConsultantRouter {
    * ]}
    */
   public all(req: Request, res: Response): void {
-    Consultant.find()
-      .populate("ticket")
+    const companyId: string = req.params.companyId;
+    Consultant.find({ companyId: companyId })
+      .populate("tickets")
       .then(data => {
         res.status(200).json({ data });
       })
@@ -70,7 +71,7 @@ export class ConsultantRouter {
     const consultantId: string = req.params.consultantId;
 
     Consultant.findById(consultantId)
-      .populate("ticket")
+      .populate("tickets")
       .then(data => {
         res.status(200).json({ data });
       })
@@ -109,12 +110,14 @@ export class ConsultantRouter {
     const lastName: string = req.body.lastName;
     const password: string = req.body.password;
     const description: string = req.body.description;
+    const companyId: string = req.body.companyId;
 
     const consultant = new Consultant({
       name,
       lastName,
       password,
-      description
+      description,
+      companyId
     });
 
     consultant
@@ -157,53 +160,12 @@ export class ConsultantRouter {
   public update(req: Request, res: Response): void {
     const _id: string = req.params.consultantId;
     Consultant.findByIdAndUpdate({ _id: _id }, req.body)
-      .then(data => {
-        res.status(200).json({ data });
+      .then(() => {
+        res.status(200).json({ data: true });
       })
       .catch(error => {
         res.status(500).json({ error });
       });
-  }
-  public updateRanking(req: Request, res: Response): void {
-    const consultantId: string = req.params.consultantId;
-    Ticket.find()
-      .then(dataTicket => {
-        const idTickets: string[] = req.body.tickets;
-        const newtickets: ITicket[] = [];
-        idTickets.forEach(id => {
-          newtickets.push(dataTicket.find(item => item._id === id));
-        });
-
-        Consultant.findById(consultantId)
-          .populate("ticket")
-          .then((data: IConsultant) => {
-            let rankingNewTickets = 0;
-            newtickets.forEach(newTicket => {
-              rankingNewTickets += newTicket.ranking;
-            });
-            let totalRanking = 0;
-            if (data.tickets.length > 0) {
-              data.tickets.forEach(ticket => {
-                totalRanking += ticket.ranking;
-              });
-            }
-            const rankingAverage = (totalRanking + rankingNewTickets) / (data.tickets.length + newtickets.length);
-            Consultant.findByIdAndUpdate({ _id: consultantId }, { rankingAverage: rankingAverage })
-              .then(dataRes => {
-                res.status(200).json({ data: dataRes });
-              })
-              .catch(error => {
-                res.status(500).json({ error });
-              });
-          })
-          .catch(error => {
-            res.status(500).json({ error });
-          });
-      })
-      .catch(error => {
-        res.status(500).json({ error });
-      });
-
   }
   /**
    * @api {DELETE} /consultant/:_id Request  Deleted
@@ -235,10 +197,9 @@ export class ConsultantRouter {
 
   // set up our routes
   public routes() {
-    this.router.get("/", this.all);
-    this.router.get("/:consultantId", this.oneById);
+    this.router.get("/bycompanyid/:companyId", this.all);
+    this.router.get("/byconsultantid/:consultantId", this.oneById);
     this.router.post("/", this.create);
-    this.router.post("/consultantId", this.updateRanking);
     this.router.put("/:consultantId", this.update);
     this.router.delete("/:consultantId", this.delete);
   }

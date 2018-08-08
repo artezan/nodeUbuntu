@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Consultant_1 = require("../models/Consultant");
-const Ticket_1 = require("../models/Ticket");
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} createdAt
@@ -36,8 +35,9 @@ class ConsultantRouter {
      * ]}
      */
     all(req, res) {
-        Consultant_1.default.find()
-            .populate("ticket")
+        const companyId = req.params.companyId;
+        Consultant_1.default.find({ companyId: companyId })
+            .populate("tickets")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -67,7 +67,7 @@ class ConsultantRouter {
     oneById(req, res) {
         const consultantId = req.params.consultantId;
         Consultant_1.default.findById(consultantId)
-            .populate("ticket")
+            .populate("tickets")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -105,11 +105,13 @@ class ConsultantRouter {
         const lastName = req.body.lastName;
         const password = req.body.password;
         const description = req.body.description;
+        const companyId = req.body.companyId;
         const consultant = new Consultant_1.default({
             name,
             lastName,
             password,
-            description
+            description,
+            companyId
         });
         consultant
             .save()
@@ -150,47 +152,8 @@ class ConsultantRouter {
     update(req, res) {
         const _id = req.params.consultantId;
         Consultant_1.default.findByIdAndUpdate({ _id: _id }, req.body)
-            .then(data => {
-            res.status(200).json({ data });
-        })
-            .catch(error => {
-            res.status(500).json({ error });
-        });
-    }
-    updateRanking(req, res) {
-        const consultantId = req.params.consultantId;
-        Ticket_1.default.find()
-            .then(dataTicket => {
-            const idTickets = req.body.tickets;
-            const newtickets = [];
-            idTickets.forEach(id => {
-                newtickets.push(dataTicket.find(item => item._id === id));
-            });
-            Consultant_1.default.findById(consultantId)
-                .populate("ticket")
-                .then((data) => {
-                let rankingNewTickets = 0;
-                newtickets.forEach(newTicket => {
-                    rankingNewTickets += newTicket.ranking;
-                });
-                let totalRanking = 0;
-                if (data.tickets.length > 0) {
-                    data.tickets.forEach(ticket => {
-                        totalRanking += ticket.ranking;
-                    });
-                }
-                const rankingAverage = (totalRanking + rankingNewTickets) / (data.tickets.length + newtickets.length);
-                Consultant_1.default.findByIdAndUpdate({ _id: consultantId }, { rankingAverage: rankingAverage })
-                    .then(dataRes => {
-                    res.status(200).json({ data: dataRes });
-                })
-                    .catch(error => {
-                    res.status(500).json({ error });
-                });
-            })
-                .catch(error => {
-                res.status(500).json({ error });
-            });
+            .then(() => {
+            res.status(200).json({ data: true });
         })
             .catch(error => {
             res.status(500).json({ error });
@@ -223,10 +186,9 @@ class ConsultantRouter {
     }
     // set up our routes
     routes() {
-        this.router.get("/", this.all);
-        this.router.get("/:consultantId", this.oneById);
+        this.router.get("/bycompanyid/:companyId", this.all);
+        this.router.get("/byconsultantid/:consultantId", this.oneById);
         this.router.post("/", this.create);
-        this.router.post("/consultantId", this.updateRanking);
         this.router.put("/:consultantId", this.update);
         this.router.delete("/:consultantId", this.delete);
     }

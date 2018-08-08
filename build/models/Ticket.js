@@ -29,7 +29,12 @@ const TicketSchema = new mongoose_1.Schema({
     status: {
         type: String,
         default: "Pendiente"
+    },
+    companyId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Company"
     }
 });
-exports.default = mongoose_1.model("Ticket", TicketSchema);
+// probar 
+exports.default = mongoose_1.model("Ticket", TicketSchema, "Ticket");
 //# sourceMappingURL=Ticket.js.map

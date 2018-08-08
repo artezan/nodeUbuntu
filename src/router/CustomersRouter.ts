@@ -36,8 +36,9 @@ export class CustomersRouter {
      * ]}
      */
     public all(req: Request, res: Response): void {
-        Customer.find()
-            .populate("ticket")
+        const companyId: string = req.params.companyId;
+        Customer.find({ companyId: companyId })
+            .populate("tickets")
             .then(data => {
                 res.status(200).json({ data });
             })
@@ -69,7 +70,7 @@ export class CustomersRouter {
         const customerId: string = req.params.customerId;
 
         Customer.findById(customerId)
-            .populate("ticket")
+            .populate("tickets")
             .then(data => {
                 res.status(200).json({ data });
             })
@@ -113,6 +114,8 @@ export class CustomersRouter {
         const email: number = req.body.email;
         const password: string = req.body.password;
         const workArea: number = req.body.workArea;
+        const companyId: string = req.body.companyId;
+
 
         const customer = new Customer({
             logo,
@@ -123,7 +126,8 @@ export class CustomersRouter {
             phone,
             email,
             workArea,
-            password
+            password,
+            companyId
         });
         customer
             .save()
@@ -166,8 +170,8 @@ export class CustomersRouter {
         const _id: string = req.params.customerId;
 
         Customer.findByIdAndUpdate({ _id: _id }, req.body)
-            .then(data => {
-                res.status(200).json({ data });
+            .then(() => {
+                res.status(200).json({ data: true });
             })
             .catch(error => {
                 res.status(500).json({ error });
@@ -203,8 +207,8 @@ export class CustomersRouter {
 
     // set up our routes
     public routes() {
-        this.router.get("/", this.all);
-        this.router.get("/:customerId", this.oneById);
+        this.router.get("/bycompanyid/:companyId", this.all);
+        this.router.get("/bycustomerid/:customerId", this.oneById);
         this.router.post("/", this.create);
         this.router.put("/:customerId", this.update);
         this.router.delete("/:customerId", this.delete);

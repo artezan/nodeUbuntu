@@ -35,8 +35,9 @@ class CustomersRouter {
      * ]}
      */
     all(req, res) {
-        Customer_1.default.find()
-            .populate("ticket")
+        const companyId = req.params.companyId;
+        Customer_1.default.find({ companyId: companyId })
+            .populate("tickets")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -66,7 +67,7 @@ class CustomersRouter {
     oneById(req, res) {
         const customerId = req.params.customerId;
         Customer_1.default.findById(customerId)
-            .populate("ticket")
+            .populate("tickets")
             .then(data => {
             res.status(200).json({ data });
         })
@@ -109,6 +110,7 @@ class CustomersRouter {
         const email = req.body.email;
         const password = req.body.password;
         const workArea = req.body.workArea;
+        const companyId = req.body.companyId;
         const customer = new Customer_1.default({
             logo,
             name,
@@ -118,7 +120,8 @@ class CustomersRouter {
             phone,
             email,
             workArea,
-            password
+            password,
+            companyId
         });
         customer
             .save()
@@ -159,8 +162,8 @@ class CustomersRouter {
     update(req, res) {
         const _id = req.params.customerId;
         Customer_1.default.findByIdAndUpdate({ _id: _id }, req.body)
-            .then(data => {
-            res.status(200).json({ data });
+            .then(() => {
+            res.status(200).json({ data: true });
         })
             .catch(error => {
             res.status(500).json({ error });
@@ -193,8 +196,8 @@ class CustomersRouter {
     }
     // set up our routes
     routes() {
-        this.router.get("/", this.all);
-        this.router.get("/:customerId", this.oneById);
+        this.router.get("/bycompanyid/:companyId", this.all);
+        this.router.get("/bycustomerid/:customerId", this.oneById);
         this.router.post("/", this.create);
         this.router.put("/:customerId", this.update);
         this.router.delete("/:customerId", this.delete);
