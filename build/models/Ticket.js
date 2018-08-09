@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-// tslint:disable object-literal-sort-keys
 const TicketSchema = new mongoose_1.Schema({
     timestamp: {
         type: Date,
@@ -43,6 +42,5 @@ const TicketSchema = new mongoose_1.Schema({
         ref: "Company"
     }
 });
-// probar
-exports.default = mongoose_1.model("Ticket", TicketSchema, "Ticket");
+exports.default = mongoose_1.model("Ticket", TicketSchema);
 //# sourceMappingURL=Ticket.js.map

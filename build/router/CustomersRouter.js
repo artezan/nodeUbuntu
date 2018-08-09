@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Customer_1 = require("../models/Customer");
+const multer = require("multer");
+const path = require("path");
 /**
  * @apiDefine CustomersResponseParams
  * @apiSuccess {Date} createdAt
@@ -194,6 +196,28 @@ class CustomersRouter {
             res.status(500).json({ error });
         });
     }
+    uploadFile(req, res) {
+        const storage = multer.diskStorage({
+            destination: "./build",
+            // tslint:disable-next-line:no-shadowed-variable
+            filename: (req, file, cb) => {
+                cb(
+                // tslint:disable-next-line:no-null-keyword
+                null, file.fieldname + "-" + path.parse(file.originalname).name + path.extname(file.originalname));
+            }
+        });
+        const upload = multer({
+            storage
+        }).single("imagen1");
+        upload(req, res, ((err) => {
+            if (err) {
+                res.status(500).json({ err });
+            }
+            else {
+                res.status(200).json({ data: req.file.path });
+            }
+        }));
+    }
     // set up our routes
     routes() {
         this.router.get("/bycompanyid/:companyId", this.all);
@@ -201,6 +225,7 @@ class CustomersRouter {
         this.router.post("/", this.create);
         this.router.put("/:customerId", this.update);
         this.router.delete("/:customerId", this.delete);
+        this.router.post("/uploadImg", this.uploadFile);
     }
 }
 exports.CustomersRouter = CustomersRouter;

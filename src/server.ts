@@ -11,12 +11,14 @@ import { TicketsRouter } from "./router/TicketsRouter";
 import { CustomersRouter } from "./router/CustomersRouter";
 import { ConsultantRouter } from "./router/ConsultantRouter";
 import { CompaniesRouter } from "./router/CompaniesRouter";
+import { PostsRouter } from "./router/PostsRouter";
 
 class Server {
   public ticketsRouter = new TicketsRouter();
   public customersRouter = new CustomersRouter();
   public consultantsRouter = new ConsultantRouter();
   public companiesRouter = new CompaniesRouter();
+  public postsRouter = new PostsRouter();
 
   // set app to be of type express.Application
   public app: express.Application;
@@ -73,6 +75,7 @@ class Server {
     this.app.use("/api/v1/consultants", this.consultantsRouter.router);
     this.app.use("/api/v1/customers", this.customersRouter.router);
     this.app.use("/api/v1/tickets", this.ticketsRouter.router);
+    this.app.use("/api/v1/posts", this.postsRouter.router);
   }
 }
 

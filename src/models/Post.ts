@@ -1,14 +1,16 @@
 import { model, Schema, Document } from "mongoose";
+import { ITicket } from "./Ticket";
+import { ICustomer } from "./Customer";
+import { IConsultant } from "./Consultant";
 interface IPost extends Document {
   timestamp: Date;
   title: string;
-  slug: any;
   content: string;
-  featuredImage: string;
-  category: string;
-  published: boolean;
+  ticket: ITicket;
+  custumer: ICustomer;
+  consultant: IConsultant;
+  isByCustumer: boolean;
 }
-// tslint:disable object-literal-sort-keys
 const PostSchema: Schema = new Schema({
   timestamp: {
     type: Date,
@@ -16,32 +18,25 @@ const PostSchema: Schema = new Schema({
   },
   title: {
     type: String,
-    default: "",
-    required: true
-  },
-  slug: {
-    type: String,
-    default: "",
-    required: true,
-    unique: true,
-    trim: true
   },
   content: {
     type: String,
-    default: "",
     required: true
   },
-  featuredImage: {
-    type: String,
-    default: ""
+  customer: {
+      type: Schema.Types.ObjectId,
+      ref: "Customer"
   },
-  category: {
-    type: String,
-    default: ""
+  consultant: {
+      type: Schema.Types.ObjectId,
+      ref: "Consultant"
   },
-  published: {
+  ticket: {
+    type: Schema.Types.ObjectId,
+    ref: "Ticket"
+  },
+  isByCustumer: {
     type: Boolean,
-    default: false
   }
 });
 

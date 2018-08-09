@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
-// tslint:disable object-literal-sort-keys
 const PostSchema = new mongoose_1.Schema({
     timestamp: {
         type: Date,
@@ -9,32 +8,25 @@ const PostSchema = new mongoose_1.Schema({
     },
     title: {
         type: String,
-        default: "",
-        required: true
-    },
-    slug: {
-        type: String,
-        default: "",
-        required: true,
-        unique: true,
-        trim: true
     },
     content: {
         type: String,
-        default: "",
         required: true
     },
-    featuredImage: {
-        type: String,
-        default: ""
+    customer: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Customer"
     },
-    category: {
-        type: String,
-        default: ""
+    consultant: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Consultant"
     },
-    published: {
+    ticket: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Ticket"
+    },
+    isByCustumer: {
         type: Boolean,
-        default: false
     }
 });
 exports.default = mongoose_1.model("Post", PostSchema);

@@ -117,12 +117,14 @@ class TicketsRouter {
         const customer = req.body.customerId;
         const consultant = req.body.consultantId;
         const companyId = req.body.companyId;
+        const cost = req.body.cost;
         const ticket = new Ticket_1.default({
             hours,
             description,
             consultant,
             customer,
-            companyId
+            companyId,
+            cost
         });
         ticket
             .save()

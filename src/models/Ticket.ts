@@ -14,7 +14,6 @@ export interface ITicket extends Document {
     isPay: boolean;
 
 }
-// Cambiar Router !!!!!!
 const TicketSchema: Schema = new Schema({
     timestamp: {
         type: Date,
@@ -57,4 +56,4 @@ const TicketSchema: Schema = new Schema({
     }
 });
 
-export default model<ITicket>("Ticket", TicketSchema, "Ticket");
+export default model<ITicket>("Ticket", TicketSchema);

@@ -1,16 +1,10 @@
-import { Request, Response, Router } from "express";
-import Customer from "../models/Customer";
-import * as multer from "multer";
-import * as path from "path";
-export interface MulterFile {
-    key: string; // Available using `S3`.
-    path: string; // Available using `DiskStorage`.
-    mimetype: string;
-    originalname: string;
-    size: number;
-  }
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const Ticket_1 = require("../models/Ticket");
+const Post_1 = require("../models/Post");
 /**
- * @apiDefine CustomersResponseParams
+ * @apiDefine TicketsResponseParams
  * @apiSuccess {Date} createdAt
  * @apiSuccess {Date} [updatedAt]
  * @apiSuccess {ObjectId} _id
@@ -22,40 +16,41 @@ export interface MulterFile {
  * @apiSuccess {Books} books
  * @apiSuccess {Post} post
  */
-export class CustomersRouter {
-    public router: Router;
-
+class PostsRouter {
     constructor() {
-        this.router = Router();
+        this.router = express_1.Router();
         this.routes();
     }
     /**
-     * @api {GET} /customers/ Request all
+     * @api {GET} /users/ Request all
      * @apiVersion  0.1.0
      * @apiName get
      * @apiGroup Users
      *
      *
-     * @apiSampleRequest /customers/
+     * @apiSampleRequest /users/
      *
      * @apiSuccessExample {json} Success-Response a JSON-Array<user>:
      * {"data":[
      * {"createdAt": "2018-04-15T22:08:19.645Z", "updatedAt": "2018-04-15T22:08:19.645Z", "firstName": "user102", "lastName": "last102", "username": "user102", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5ad3cd5346a90e3d1c9c09a1", "__v": 0 }, { "createdAt": "2018-04-15T22:13:52.471Z", "updatedAt": "2018-04-15T22:13:52.471Z", "firstName": "user25", "lastName": "last25", "username": "username25", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:19:36.520Z", "name": "libro4", "pages": 150, "_id": "5ad3c1e8d4f5791f80c86746", "__v": 0 } ], "_id": "5ad3cea0206c9611d0a7906c", "__v": 0 }
      * ]}
      */
-    public all(req: Request, res: Response): void {
-        const companyId: string = req.params.companyId;
-        Customer.find({ companyId: companyId })
-            .populate("tickets")
+    all(req, res) {
+        const ticketId = req.params.ticketId;
+        Post_1.default.findById({ ticket: ticketId })
+            .populate("customer")
+            .populate("consultant")
+            .populate("ticket")
+            .sort({ timestamp: "asc" })
             .then(data => {
-                res.status(200).json({ data });
-            })
+            res.status(200).json({ data });
+        })
             .catch(error => {
-                res.status(500).json({ error });
-            });
+            res.status(500).json({ error });
+        });
     }
     /**
-     * @api {GET} /customers/:_id Request by Object Id
+     * @api {GET} /users/:_id Request by Object Id
      * @apiVersion  0.1.0
      * @apiName getById
      * @apiGroup Users
@@ -73,35 +68,41 @@ export class CustomersRouter {
      * @apiSuccessExample {json} Success-Response User:
      * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ { "timestamp": "2018-03-29T13:44:27.979Z", "title": "Post1", "slug": "post1", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": false, "_id": "5abcedbbfb5dfb236c199e81", "__v": 0 }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
-
-    public oneById(req: Request, res: Response): void {
-        const customerId: string = req.params.customerId;
-
-        Customer.findById(customerId)
-            .populate("tickets")
+    oneById(req, res) {
+        const ticketId = req.params.ticketId;
+        Ticket_1.default.findById(ticketId)
+            .populate("customer")
+            .populate("consultant")
             .then(data => {
-                res.status(200).json({ data });
-            })
+            res.status(200).json({ data });
+        })
             .catch(error => {
-                res.status(500).json({ error });
-            });
+            res.status(500).json({ error });
+        });
+        /*User.findOne({ username }).select('lastName')
+          .then((data) => {
+            res.status(200).json({ data });
+          })
+          .catch((error) => {
+            res.status(500).json({ error });
+          });*/
     }
     /**
-     * @api {POST} /customers/ Request New
+     * @api {POST} /users/ Request New
      * @apiVersion  0.1.0
      * @apiName post
      * @apiGroup Users
      *
      *
-     * @apiParam {string} [logo]
-     * @apiParam {string} name
-     * @apiParam {string} [lastName]
-     * @apiParam {string} [adress]
-     * @apiParam {tickets[]} tickets._id
-     * @apiParam {number} totalHours
-     * @apiParam {number} phone
-     * @apiParam {string} email
-     * @apiParam {string} workArea
+     * @apiParam {string} firstName
+     * @apiParam {string} lastName
+     * @apiParam {string} username
+     * @apiParam {string} [email]
+     * @apiParam {string} password
+     * @apiParam {Books} books
+     * @apiParam {ObjectId[]} book._id
+     * @apiParam {Posts} posts
+     * @apiParam {string} status •	Atendiendo. •	Cerrado. Pendiente
      *
      * @apiParamExample {json} Request-Example:
      * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
@@ -111,43 +112,32 @@ export class CustomersRouter {
      * @apiSuccessExample {json} Success-Response Created User:
      * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c175d4f5791f80c86742" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
-
-    public create(req: Request, res: Response): void {
-        const logo: string = req.body.logo;
-        const name: string = req.body.name;
-        const adress: string = req.body.adress;
-        const tickets: string[] = req.body.tickets;
-        const totalHours: number = req.body.totalHours;
-        const phone: number = req.body.phone;
-        const email: number = req.body.email;
-        const password: string = req.body.password;
-        const workArea: number = req.body.workArea;
-        const companyId: string = req.body.companyId;
-
-
-        const customer = new Customer({
-            logo,
-            name,
-            adress,
-            tickets,
-            totalHours,
-            phone,
-            email,
-            workArea,
-            password,
-            companyId
+    create(req, res) {
+        const title = req.body.title;
+        const content = req.body.content;
+        const customer = req.body.customerId;
+        const consultant = req.body.consultantId;
+        const ticket = req.body.ticketId;
+        const isByCustumer = req.body.isByCustumer;
+        const post = new Post_1.default({
+            title,
+            content,
+            customer,
+            consultant,
+            ticket,
+            isByCustumer
         });
-        customer
+        post
             .save()
             .then(data => {
-                res.status(201).json({ data });
-            })
+            res.status(201).json({ data });
+        })
             .catch(error => {
-                res.status(500).json({ error });
-            });
+            res.status(500).json({ error });
+        });
     }
     /**
-     * @api {PUT} /customers/:_id Request Update
+     * @api {PUT} /users/:_id Request Update
      * @apiVersion  0.1.0
      * @apiName put
      * @apiGroup Users
@@ -173,20 +163,18 @@ export class CustomersRouter {
      * @apiSuccessExample {json} Success-Response:
      * { "data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname21", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c1d6d4f5791f80c86744" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
      */
-
-    public update(req: Request, res: Response): void {
-        const _id: string = req.params.customerId;
-
-        Customer.findByIdAndUpdate({ _id: _id }, req.body)
+    update(req, res) {
+        const _id = req.params.postId;
+        Post_1.default.findByIdAndUpdate({ _id: _id }, req.body)
             .then(() => {
-                res.status(200).json({ data: true });
-            })
+            res.status(200).json({ data: true });
+        })
             .catch(error => {
-                res.status(500).json({ error });
-            });
+            res.status(500).json({ error });
+        });
     }
     /**
-     * @api {DELETE} /customers/:_id Request  Deleted
+     * @api {DELETE} /users/:_id Request  Deleted
      * @apiVersion  0.1.0
      * @apiName deleteByToken
      * @apiGroup Users
@@ -200,51 +188,23 @@ export class CustomersRouter {
      * @apiSuccessExample {json} Success-Response:
      * {"data":true}
      */
-
-    public delete(req: Request, res: Response): void {
-        const _id: string = req.params.customerId;
-
-        Customer.findByIdAndRemove({ _id: _id })
+    delete(req, res) {
+        const _id = req.params.postId;
+        Post_1.default.findByIdAndRemove({ _id: _id })
             .then(() => {
-                res.status(200).json({ data: true });
-            })
+            res.status(200).json({ data: true });
+        })
             .catch(error => {
-                res.status(500).json({ error });
-            });
-    }
-    public uploadFile(req: any , res: Response) {
-        const storage = multer.diskStorage({
-            destination: "./build",
-            // tslint:disable-next-line:no-shadowed-variable
-            filename: (req, file, cb) => {
-                cb(
-                    // tslint:disable-next-line:no-null-keyword
-                    null,
-                    file.fieldname + "-" + path.parse(file.originalname).name + path.extname(file.originalname)
-                );
-            }
+            res.status(500).json({ error });
         });
-        const upload = multer({
-            storage
-        }).single("imagen1");
-        upload(req, res, ((err) => {
-            if (err) {
-                res.status(500).json({ err });
-
-            } else {
-                res.status(200).json({ data: req.file.path });
-            }
-        }));
-
     }
-
     // set up our routes
-    public routes() {
-        this.router.get("/bycompanyid/:companyId", this.all);
-        this.router.get("/bycustomerid/:customerId", this.oneById);
+    routes() {
+        this.router.get("/byticketid/:ticketId", this.all);
         this.router.post("/", this.create);
-        this.router.put("/:customerId", this.update);
-        this.router.delete("/:customerId", this.delete);
-        this.router.post("/uploadImg", this.uploadFile);
+        this.router.put("/:postId", this.update);
+        this.router.delete("/:postId", this.delete);
     }
 }
+exports.PostsRouter = PostsRouter;
+//# sourceMappingURL=PostsRouter.js.map

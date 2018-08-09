@@ -1,10 +1,8 @@
 import { Request, Response, Router } from "express";
-import { ObjectId } from "../../node_modules/@types/bson";
-import Ticket, { ITicket } from "../models/Ticket";
+import Ticket from "../models/Ticket";
 import { CustmersLogic } from "../logic/CustumersLogic";
 import { ConsultantsLogic } from "../logic/ConsultantsLogic";
-import Consultant from "../models/Consultant";
-import Customer from "../models/Customer";
+import Post from "../models/Post";
 /**
  * @apiDefine TicketsResponseParams
  * @apiSuccess {Date} createdAt
@@ -18,7 +16,7 @@ import Customer from "../models/Customer";
  * @apiSuccess {Books} books
  * @apiSuccess {Post} post
  */
-export class TicketsRouter {
+export class PostsRouter {
   public router: Router;
 
   constructor() {
@@ -40,10 +38,12 @@ export class TicketsRouter {
    * ]}
    */
   public all(req: Request, res: Response): void {
-    const companyId: string = req.params.companyId;
-    Ticket.find({ companyId: companyId })
+    const ticketId: string = req.params.ticketId;
+    Post.findById({ ticket: ticketId })
       .populate("customer")
       .populate("consultant")
+      .populate("ticket")
+      .sort({ timestamp: "asc" })
       .then(data => {
         res.status(200).json({ data });
       })
@@ -119,31 +119,26 @@ export class TicketsRouter {
    */
 
   public create(req: Request, res: Response): void {
-    const hours: number = req.body.hours;
-    const description: string = req.body.description;
+
+    const title: string = req.body.title;
+    const content: string = req.body.content;
     const customer: string = req.body.customerId;
     const consultant: string = req.body.consultantId;
-    const companyId: string = req.body.companyId;
-    const cost: number = req.body.cost;
+    const ticket: string = req.body.ticketId;
+    const isByCustumer: boolean = req.body.isByCustumer;
 
 
-    const ticket = new Ticket({
-      hours,
-      description,
-      consultant,
+    const post = new Post({
+      title,
+      content,
       customer,
-      companyId,
-      cost
+      consultant,
+      ticket,
+      isByCustumer
     });
-    ticket
+    post
       .save()
       .then(data => {
-        if (customer) {
-          CustmersLogic.Instance().addTicketToCustomer(data, customer);
-        }
-        if (consultant) {
-          ConsultantsLogic.Instance().addTicketToConsultant(data, consultant);
-        }
         res.status(201).json({ data });
       })
       .catch(error => {
@@ -179,18 +174,12 @@ export class TicketsRouter {
    */
 
   public update(req: Request, res: Response): void {
-    const _id: string = req.params.ticketId;
-    Ticket.findByIdAndUpdate({ _id: _id }, req.body).then(() => {
-      Ticket.findById(_id).then(ticket => {
-        if (ticket.consultant) {
-          ConsultantsLogic.Instance().addTicketToConsultant(ticket, ticket.consultant);
-        }
-        if (ticket.customer) {
-          CustmersLogic.Instance().addTicketToCustomer(ticket, ticket.customer);
-        }
-      }).catch();
-      res.status(200).json({ data: true });
-    })
+    const _id: string = req.params.postId;
+
+    Post.findByIdAndUpdate({ _id: _id }, req.body)
+      .then(() => {
+        res.status(200).json({ data: true });
+      })
       .catch(error => {
         res.status(500).json({ error });
       });
@@ -212,59 +201,22 @@ export class TicketsRouter {
    */
 
   public delete(req: Request, res: Response): void {
-    const _id: string = req.params.ticketId;
+    const _id: string = req.params.postId;
 
-    Ticket.findByIdAndRemove({ _id: _id })
+    Post.findByIdAndRemove({ _id: _id })
       .then(() => {
-        CustmersLogic.Instance().removeTicket(_id);
-        ConsultantsLogic.Instance().removeTicket(_id);
         res.status(200).json({ data: true });
       })
       .catch(error => {
         res.status(500).json({ error });
       });
   }
-  public changeTicket(req: Request, res: Response): void {
-    const ticketId: string = req.params.ticketId;
-    const newCustomer: string = req.body.newCustomerId;
-    const oldCustomer: string = req.body.oldCustomerId;
-    const newConsultant: string = req.body.newConsultantId;
-    const oldConsultant: string = req.body.oldConsultantId;
-    if (newCustomer && oldCustomer && !newConsultant && !oldConsultant) {
-      Ticket.findByIdAndUpdate({ _id: ticketId }, { customer: newCustomer }).then(() => {
-        Ticket.findById(ticketId).then(ticket => {
-          CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);
-        }).catch();
-
-      });
-    }
-    if (newConsultant && oldConsultant && !newCustomer && !oldCustomer) {
-      Ticket.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
-        Ticket.findById(ticketId).then(ticket => {
-          ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
-        }).catch();
-
-      });
-    }
-    if (newConsultant && oldConsultant && newCustomer && oldCustomer) {
-      Ticket.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
-        Ticket.findById(ticketId).then(ticket => {
-          ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
-          CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);
-        }).catch();
-
-      });
-    }
-    res.status(200).json({ data: true });
-  }
 
   // set up our routes
   public routes() {
-    this.router.get("/bycompanyid/:companyId", this.all);
-    this.router.get("/byticketid/:ticketId", this.oneById);
-    this.router.post("/newticket", this.create);
-    this.router.post("/changeticket/:ticketId", this.changeTicket);
-    this.router.put("/:ticketId", this.update);
-    this.router.delete("/:ticketId", this.delete);
+    this.router.get("/byticketid/:ticketId", this.all);
+    this.router.post("/", this.create);
+    this.router.put("/:postId", this.update);
+    this.router.delete("/:postId", this.delete);
   }
 }
