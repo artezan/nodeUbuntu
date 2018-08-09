@@ -8,6 +8,7 @@ const express = require("express");
 const helmet = require("helmet");
 const mongoose = require("mongoose");
 const logger = require("morgan");
+const path = require("path");
 const TicketsRouter_1 = require("./router/TicketsRouter");
 const CustomersRouter_1 = require("./router/CustomersRouter");
 const ConsultantRouter_1 = require("./router/ConsultantRouter");
@@ -38,6 +39,7 @@ class Server {
         this.app.use(helmet());
         this.app.use(cors());
         this.app.use(express.static("doc"));
+        this.app.use(express.static(path.join(__dirname, "/public")));
         // cors
         this.app.use((req, res, next) => {
             res.header("Access-Control-Allow-Origin", "http://localhost:8080");
