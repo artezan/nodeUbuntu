@@ -8,7 +8,7 @@ export interface MulterFile {
     mimetype: string;
     originalname: string;
     size: number;
-  }
+}
 /**
  * @apiDefine CustomersResponseParams
  * @apiSuccess {Date} createdAt
@@ -212,15 +212,15 @@ export class CustomersRouter {
                 res.status(500).json({ error });
             });
     }
-    public uploadFile(req: any , res: Response) {
+    public uploadFile(req: any, res: Response) {
         const storage = multer.diskStorage({
-            destination: "./build",
+            destination: "./build/public",
             // tslint:disable-next-line:no-shadowed-variable
             filename: (req, file, cb) => {
                 cb(
                     // tslint:disable-next-line:no-null-keyword
                     null,
-                    file.fieldname + "-" + path.parse(file.originalname).name + path.extname(file.originalname)
+                    /* file.fieldname + "-" +  */path.parse(file.originalname).name + path.extname(file.originalname)
                 );
             }
         });

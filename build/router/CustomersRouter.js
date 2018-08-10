@@ -198,12 +198,13 @@ class CustomersRouter {
     }
     uploadFile(req, res) {
         const storage = multer.diskStorage({
-            destination: "./build",
+            destination: "./build/public",
             // tslint:disable-next-line:no-shadowed-variable
             filename: (req, file, cb) => {
                 cb(
                 // tslint:disable-next-line:no-null-keyword
-                null, file.fieldname + "-" + path.parse(file.originalname).name + path.extname(file.originalname));
+                null, 
+                /* file.fieldname + "-" +  */ path.parse(file.originalname).name + path.extname(file.originalname));
             }
         });
         const upload = multer({

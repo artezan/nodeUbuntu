@@ -39,6 +39,7 @@ class Server {
         this.app.use(helmet());
         this.app.use(cors());
         this.app.use(express.static("doc"));
+        // imagenes subidas
         this.app.use(express.static(path.join(__dirname, "/public")));
         // cors
         this.app.use((req, res, next) => {
