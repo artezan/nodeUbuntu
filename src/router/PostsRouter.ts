@@ -4,7 +4,7 @@ import { CustmersLogic } from "../logic/CustumersLogic";
 import { ConsultantsLogic } from "../logic/ConsultantsLogic";
 import Post from "../models/Post";
 /**
- * @apiDefine TicketsResponseParams
+ * @apiDefine PostResponseParams
  * @apiSuccess {Date} createdAt
  * @apiSuccess {Date} [updatedAt]
  * @apiSuccess {ObjectId} _id
@@ -65,7 +65,7 @@ export class PostsRouter {
    *
    * @apiSampleRequest /users/
    *
-   * @apiUse UserResponseParams
+   * @apiUse PostResponseParams
    *
    * @apiSuccessExample {json} Success-Response User:
    * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ { "timestamp": "2018-03-29T13:44:27.979Z", "title": "Post1", "slug": "post1", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": false, "_id": "5abcedbbfb5dfb236c199e81", "__v": 0 }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
@@ -112,7 +112,7 @@ export class PostsRouter {
    * @apiParamExample {json} Request-Example:
    * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
    *
-   * @apiUse UserResponseParams
+   * @apiUse PostResponseParams
    *
    * @apiSuccessExample {json} Success-Response Created User:
    * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c175d4f5791f80c86742" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
