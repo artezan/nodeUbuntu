@@ -9,7 +9,7 @@ interface IPost extends Document {
   ticket: ITicket;
   custumer: ICustomer;
   consultant: IConsultant;
-  isByCustumer: boolean;
+  isByCustomer: boolean;
 }
 const PostSchema: Schema = new Schema({
   timestamp: {
@@ -35,7 +35,7 @@ const PostSchema: Schema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Ticket"
   },
-  isByCustumer: {
+  isByCustomer: {
     type: Boolean,
   }
 });

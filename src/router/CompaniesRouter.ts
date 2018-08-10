@@ -128,7 +128,7 @@ export class CompaniesRouter {
             });
     }
     /**
-     * @api {DELETE} /users/:companyId Request  Deleted
+     * @api {DELETE} /company/:companyId Request  Deleted
      * @apiVersion  0.1.0
      * @apiName deleteByToken
      * @apiGroup Company

@@ -5,16 +5,14 @@ import { ConsultantsLogic } from "../logic/ConsultantsLogic";
 import Post from "../models/Post";
 /**
  * @apiDefine PostResponseParams
- * @apiSuccess {Date} createdAt
- * @apiSuccess {Date} [updatedAt]
+ * @apiSuccess {Date} timestamp
  * @apiSuccess {ObjectId} _id
- * @apiSuccess {string} firstName
- * @apiSuccess {string} lastName
- * @apiSuccess {string} username
- * @apiSuccess {string} email
- * @apiSuccess {string} password
- * @apiSuccess {Books} books
- * @apiSuccess {Post} post
+ * @apiSuccess {string} title Titulo
+ * @apiSuccess {string} content Contenido
+ * @apiSuccess {customer[]} customer
+ * @apiSuccess {consultant[]} consultant
+ * @apiSuccess {tickets[]} tickets
+ * @apiSuccess {boolean} isByCustomer
  */
 export class PostsRouter {
   public router: Router;
@@ -24,22 +22,20 @@ export class PostsRouter {
     this.routes();
   }
   /**
-   * @api {GET} /users/ Request all
+   * @api {GET} /posts/byticketid/ Request all
    * @apiVersion  0.1.0
    * @apiName get
-   * @apiGroup Users
+   * @apiGroup Post
    *
    *
-   * @apiSampleRequest /users/
+   * @apiSampleRequest /posts/byticketid/
    *
-   * @apiSuccessExample {json} Success-Response a JSON-Array<user>:
-   * {"data":[
-   * {"createdAt": "2018-04-15T22:08:19.645Z", "updatedAt": "2018-04-15T22:08:19.645Z", "firstName": "user102", "lastName": "last102", "username": "user102", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5ad3cd5346a90e3d1c9c09a1", "__v": 0 }, { "createdAt": "2018-04-15T22:13:52.471Z", "updatedAt": "2018-04-15T22:13:52.471Z", "firstName": "user25", "lastName": "last25", "username": "username25", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:19:36.520Z", "name": "libro4", "pages": 150, "_id": "5ad3c1e8d4f5791f80c86746", "__v": 0 } ], "_id": "5ad3cea0206c9611d0a7906c", "__v": 0 }
-   * ]}
+   * @apiSuccessExample {json} Success-Response a JSON-Array<Post>:
+   * { "data": [ { "timestamp": "2018-08-10T17:35:51.812Z", "_id": "5b6dccf7548e41383c4174ae", "title": "Consultoria  de Algo", "content": "Se requiere una consulta para lograr un objetivo", "customer": { "timestamp": "2018-08-10T16:06:48.854Z", "totalHours": 7, "tickets": [ "5b6dbf67b9da8f0894dd2a05" ], "_id": "5b6db8185291313ddcc318b8", "logo": "http://31.220.52.51:3000/LOGO.png", "name": "Cliente 1", "adress": "Direccion 1", "phone": 22222, "email": "cliente@gmail.com", "workArea": "Industria de ...", "password": "12345", "companyId": "5b6db7c05291313ddcc318b7", "__v": 3 }, "ticket": { "timestamp": "2018-08-10T16:37:59.838Z", "ranking": 0, "cost": 2000, "status": "Pendiente", "isPay": false, "_id": "5b6dbf67b9da8f0894dd2a05", "hours": 7, "description": "Solucionar problema con", "customer": "5b6db8185291313ddcc318b8", "companyId": "5b6db7c05291313ddcc318b7", "__v": 0, "consultant": "5b6dc7f2b9da8f0894dd2a06" }, "isByCustomer": true, "__v": 0 }, { "timestamp": "2018-08-10T17:41:32.883Z", "_id": "5b6dce4c548e41383c4174af", "content": "Claro yo lo puedo ayudar a lograr sus objetivos", "consultant": { "timestamp": "2018-08-10T17:14:26.803Z", "rankingAverage": 0, "tickets": [], "_id": "5b6dc7f2b9da8f0894dd2a06", "name": "Consultor 2", "lastName": "Apellido", "password": "1234", "description": "Especialidad en", "companyId": "5b6db7c05291313ddcc318b7", "__v": 1 }, "ticket": { "timestamp": "2018-08-10T16:37:59.838Z", "ranking": 0, "cost": 2000, "status": "Pendiente", "isPay": false, "_id": "5b6dbf67b9da8f0894dd2a05", "hours": 7, "description": "Solucionar problema con", "customer": "5b6db8185291313ddcc318b8", "companyId": "5b6db7c05291313ddcc318b7", "__v": 0, "consultant": "5b6dc7f2b9da8f0894dd2a06" }, "isByCustomer": false, "__v": 0 } ] }
    */
   public all(req: Request, res: Response): void {
     const ticketId: string = req.params.ticketId;
-    Post.findById({ ticket: ticketId })
+    Post.find({ ticket: ticketId })
       .populate("customer")
       .populate("consultant")
       .populate("ticket")
@@ -51,25 +47,6 @@ export class PostsRouter {
         res.status(500).json({ error });
       });
   }
-  /**
-   * @api {GET} /users/:_id Request by Object Id
-   * @apiVersion  0.1.0
-   * @apiName getById
-   * @apiGroup Users
-   *
-   *
-   * @apiParam {ObjectId} _id Must be provided as QueryParam
-   *
-   * @apiExample Example usage:
-   * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
-   *
-   * @apiSampleRequest /users/
-   *
-   * @apiUse PostResponseParams
-   *
-   * @apiSuccessExample {json} Success-Response User:
-   * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ { "timestamp": "2018-03-29T13:44:27.979Z", "title": "Post1", "slug": "post1", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": false, "_id": "5abcedbbfb5dfb236c199e81", "__v": 0 }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
-   */
 
   public oneById(req: Request, res: Response): void {
     const ticketId: string = req.params.ticketId;
@@ -93,29 +70,28 @@ export class PostsRouter {
       });*/
   }
   /**
-   * @api {POST} /users/ Request New
+   * @api {POST} /posts/ Request New
    * @apiVersion  0.1.0
    * @apiName post
-   * @apiGroup Users
+   * @apiGroup Post
+   * @apiDescription
+   * Se debe asignar un Cliente id o un Consultor id
    *
    *
-   * @apiParam {string} firstName
-   * @apiParam {string} lastName
-   * @apiParam {string} username
-   * @apiParam {string} [email]
-   * @apiParam {string} password
-   * @apiParam {Books} books
-   * @apiParam {ObjectId[]} book._id
-   * @apiParam {Posts} posts
-   * @apiParam {string} status •	Atendiendo. •	Cerrado. Pendiente
+   * @apiParam {string} title Titulo del Comentario
+   * @apiParam {string} content Contenido o problema
+   * @apiParam {ObjectId} [customerId]
+   * @apiParam {ObjectId} [consultantId]
+   * @apiParam {ObjectId} ticketId
+   * @apiParam {boolean} isByCustomer
    *
    * @apiParamExample {json} Request-Example:
-   * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
+   * { "title":"Consultoria  de Algo", "content":"Se requiere una consulta para lograr un objetivo", "customerId":"5b6db8185291313ddcc318b8", "ticketId":"5b6dbf67b9da8f0894dd2a05", "isByCustomer": true }
    *
    * @apiUse PostResponseParams
    *
-   * @apiSuccessExample {json} Success-Response Created User:
-   * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c175d4f5791f80c86742" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
+   * @apiSuccessExample {json} Success-Response Created Post:
+   * { "data": { "timestamp": "2018-08-10T17:35:51.812Z", "_id": "5b6dccf7548e41383c4174ae", "title": "Consultoria  de Algo", "content": "Se requiere una consulta para lograr un objetivo", "customer": "5b6db8185291313ddcc318b8", "ticket": "5b6dbf67b9da8f0894dd2a05", "isByCustomer": true, "__v": 0 } }
    */
 
   public create(req: Request, res: Response): void {
@@ -125,7 +101,7 @@ export class PostsRouter {
     const customer: string = req.body.customerId;
     const consultant: string = req.body.consultantId;
     const ticket: string = req.body.ticketId;
-    const isByCustumer: boolean = req.body.isByCustumer;
+    const isByCustomer: boolean = req.body.isByCustomer;
 
 
     const post = new Post({
@@ -134,7 +110,7 @@ export class PostsRouter {
       customer,
       consultant,
       ticket,
-      isByCustumer
+      isByCustomer
     });
     post
       .save()
@@ -146,31 +122,27 @@ export class PostsRouter {
       });
   }
   /**
-   * @api {PUT} /users/:_id Request Update
+   * @api {PUT} /posts/:postId Request Update
    * @apiVersion  0.1.0
    * @apiName put
-   * @apiGroup Users
+   * @apiGroup Post
    *
-   *
-   * @apiParam {ObjectId} _id Must be placed as QueryParam
-   * @apiParam {string} [firstName]
-   * @apiParam {string} [lastName]
-   * @apiParam {string} [username]
-   * @apiParam {string} [email]
-   * @apiParam {string} [password]
-   * @apiParam {Posts} [posts]
-   * @apiParam {ObjectId[]} post._id
-   * @apiParam {Books} [books]
-   * @apiParam {ObjectId[]} book._id
+   * @apiParam {ObjectId} postId Must be placed as QueryParam
+   * @apiParam {string} title Titulo del Comentario
+   * @apiParam {string} content Contenido o problema
+   * @apiParam {ObjectId} [customerId]
+   * @apiParam {ObjectId} [consultantId]
+   * @apiParam {ObjectId} ticketId
+   * @apiParam {boolean} isByCustome
    *
    * @apiExample Example usage:
-   * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
+   * http://31.220.52.51:3000/api/v1/posts/5b6dccf7548e41383c4174ae
    *
    * @apiParamExample {json} Request-Example:
-   * { "lastName": "lastname21","books": [ "5ad3c1d6d4f5791f80c86744" ] }
+   * { "content": "Se requiere una consultoria para lograr un objetivo" }
    *
    * @apiSuccessExample {json} Success-Response:
-   * { "data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname21", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c1d6d4f5791f80c86744" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
+   * { "data": true }
    */
 
   public update(req: Request, res: Response): void {
@@ -185,16 +157,16 @@ export class PostsRouter {
       });
   }
   /**
-   * @api {DELETE} /users/:_id Request  Deleted
+   * @api {DELETE} /posts/:_id Request  Deleted
    * @apiVersion  0.1.0
    * @apiName deleteByToken
-   * @apiGroup Users
+   * @apiGroup Post
    *
    *
    * @apiParam {ObjectId} _id Must be placed as QueryParam
    *
    * @apiExample Example usage:
-   * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
+   * http://31.220.52.51:3000/api/v1/posts/5b6dccf7548e41383c4174ae
    *
    * @apiSuccessExample {json} Success-Response:
    * {"data":true}

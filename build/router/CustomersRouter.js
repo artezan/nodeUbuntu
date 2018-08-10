@@ -6,16 +6,18 @@ const multer = require("multer");
 const path = require("path");
 /**
  * @apiDefine CustomersResponseParams
- * @apiSuccess {Date} createdAt
- * @apiSuccess {Date} [updatedAt]
+ * @apiSuccess {Date} timestamp
+ * @apiSuccess {number} totalHours Suma de horas de los tickets del cliente
  * @apiSuccess {ObjectId} _id
- * @apiSuccess {string} firstName
- * @apiSuccess {string} lastName
- * @apiSuccess {string} username
+ * @apiSuccess {tickets[]} tickets
+ * @apiSuccess {string} logo
+ * @apiSuccess {string} name
+ * @apiSuccess {string} adress
+ * @apiSuccess {number} phone
  * @apiSuccess {string} email
+ * @apiSuccess {string} workArea Area de desempeño del cliente
  * @apiSuccess {string} password
- * @apiSuccess {Books} books
- * @apiSuccess {Post} post
+ * @apiSuccess {ObjectId} companyId
  */
 class CustomersRouter {
     constructor() {
@@ -23,18 +25,16 @@ class CustomersRouter {
         this.routes();
     }
     /**
-     * @api {GET} /customers/ Request all
+     * @api {GET} /customers/bycompanyid/:companyId Request all by companyId
      * @apiVersion  0.1.0
      * @apiName get
-     * @apiGroup Users
+     * @apiGroup Customers
      *
      *
-     * @apiSampleRequest /customers/
+     * @apiSampleRequest /customers/bycompanyid/5b6da8da15199540284396ce
      *
-     * @apiSuccessExample {json} Success-Response a JSON-Array<user>:
-     * {"data":[
-     * {"createdAt": "2018-04-15T22:08:19.645Z", "updatedAt": "2018-04-15T22:08:19.645Z", "firstName": "user102", "lastName": "last102", "username": "user102", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5ad3cd5346a90e3d1c9c09a1", "__v": 0 }, { "createdAt": "2018-04-15T22:13:52.471Z", "updatedAt": "2018-04-15T22:13:52.471Z", "firstName": "user25", "lastName": "last25", "username": "username25", "email": "algo@a456.com", "password": "5636", "posts": [ { "timestamp": "2018-07-29T15:08:01.298Z", "title": "algo", "slug": "", "content": "", "featuredImage": "", "category": "c", "published": false, "_id": "5abbfcc0734d1d56e20469e2" }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:19:18.433Z", "name": "libro2", "pages": 50, "_id": "5ad3c1d6d4f5791f80c86744", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:19:36.520Z", "name": "libro4", "pages": 150, "_id": "5ad3c1e8d4f5791f80c86746", "__v": 0 } ], "_id": "5ad3cea0206c9611d0a7906c", "__v": 0 }
-     * ]}
+     * @apiSuccessExample {json} Success-Response a JSON-Array<customer>:
+     * { "data": [ { "timestamp": "2018-08-10T15:37:34.097Z", "totalHours": 0, "tickets": [], "_id": "5b6db13e09d62f219495a7dd", "logo": "http://31.220.52.51:3000/LOGO.png", "name": "Cliente 1", "adress": "Direccion 1", "phone": 22222, "email": "cliente@gmail.com", "workArea": "Industria de ...", "password": "12345", "companyId": "5b6da8da15199540284396ce", "__v": 0 } ] }
      */
     all(req, res) {
         const companyId = req.params.companyId;
@@ -48,23 +48,23 @@ class CustomersRouter {
         });
     }
     /**
-     * @api {GET} /customers/:_id Request by Object Id
+     * @api {GET} /customers/bycustomerid/:_id Request by Object Id
      * @apiVersion  0.1.0
      * @apiName getById
-     * @apiGroup Users
+     * @apiGroup Customers
      *
      *
      * @apiParam {ObjectId} _id Must be provided as QueryParam
      *
      * @apiExample Example usage:
-     * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
+     * http://31.220.52.51:3000/api/v1/customers/bycustomerid/5b6db13e09d62f219495a7dd
      *
-     * @apiSampleRequest /users/
+     * @apiSampleRequest customers/bycustomerid/5b6db13e09d62f219495a7dd
      *
      * @apiUse CustomersResponseParams
      *
-     * @apiSuccessExample {json} Success-Response User:
-     * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ { "timestamp": "2018-03-29T13:44:27.979Z", "title": "Post1", "slug": "post1", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": false, "_id": "5abcedbbfb5dfb236c199e81", "__v": 0 }, { "timestamp": "2018-03-29T13:45:17.776Z", "title": "Post4", "slug": "post2", "content": "algo contenido", "featuredImage": "imagen", "category": "category", "published": true, "_id": "5abcededfb5dfb236c199e83", "__v": 0 } ], "books": [ { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 }, { "createAt": "2018-04-15T21:17:41.101Z", "name": "libro1", "pages": 40, "_id": "5ad3c175d4f5791f80c86742", "__v": 0 } ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
+     * @apiSuccessExample {json} Success-Response Customer:
+     * { "data": { "timestamp": "2018-08-10T15:37:34.097Z", "totalHours": 0, "tickets": [], "_id": "5b6db13e09d62f219495a7dd", "logo": "http://31.220.52.51:3000/LOGO.png", "name": "Cliente 1", "adress": "Direccion 1", "phone": 22222, "email": "cliente@gmail.com", "workArea": "Industria de ...", "password": "12345", "companyId": "5b6da8da15199540284396ce", "__v": 0 } }
      */
     oneById(req, res) {
         const customerId = req.params.customerId;
@@ -81,26 +81,26 @@ class CustomersRouter {
      * @api {POST} /customers/ Request New
      * @apiVersion  0.1.0
      * @apiName post
-     * @apiGroup Users
+     * @apiGroup Customers
      *
      *
      * @apiParam {string} [logo]
      * @apiParam {string} name
-     * @apiParam {string} [lastName]
      * @apiParam {string} [adress]
      * @apiParam {tickets[]} tickets._id
-     * @apiParam {number} totalHours
      * @apiParam {number} phone
      * @apiParam {string} email
+     * @apiParam {string} password
      * @apiParam {string} workArea
+     * @apiParam {ObjectId} companyId
      *
      * @apiParamExample {json} Request-Example:
-     * {"firstName": "user50", "lastName": "lastname2", "username": "username50", "email": "demo_user@a.com", "password": "5636","posts": ["5abcedbbfb5dfb236c199e81","5abcededfb5dfb236c199e83"],"books": ["5ad3c175d4f5791f80c86742","5ad3c1d6d4f5791f80c86744"] }
+     * { "logo":"http://31.220.52.51:3000/LOGO.png", "name":"Cliente 1", "adress":"Direccion 1", "tickets":[], "phone":"22222", "email":"cliente@gmail.com", "password":"12345", "workArea":"Industria de ...", "companyId":"5b6da8da15199540284396ce" }
      *
      * @apiUse CustomersResponseParams
      *
      * @apiSuccessExample {json} Success-Response Created User:
-     * {"data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname2", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c175d4f5791f80c86742" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
+     * { "data": { "timestamp": "2018-08-10T15:37:34.097Z", "totalHours": 0, "tickets": [], "_id": "5b6db13e09d62f219495a7dd", "logo": "http://31.220.52.51:3000/LOGO.png", "name": "Cliente 1", "adress": "Direccion 1", "phone": 22222, "email": "cliente@gmail.com", "workArea": "Industria de ...", "password": "12345", "companyId": "5b6da8da15199540284396ce", "__v": 0 } }
      */
     create(req, res) {
         const logo = req.body.logo;
@@ -135,31 +135,31 @@ class CustomersRouter {
         });
     }
     /**
-     * @api {PUT} /customers/:_id Request Update
+     * @api {PUT} /customers/:customerId Request Update
      * @apiVersion  0.1.0
      * @apiName put
-     * @apiGroup Users
+     * @apiGroup Customers
      *
      *
-     * @apiParam {ObjectId} _id Must be placed as QueryParam
-     * @apiParam {string} [firstName]
-     * @apiParam {string} [lastName]
-     * @apiParam {string} [username]
-     * @apiParam {string} [email]
-     * @apiParam {string} [password]
-     * @apiParam {Posts} [posts]
-     * @apiParam {ObjectId[]} post._id
-     * @apiParam {Books} [books]
-     * @apiParam {ObjectId[]} book._id
+     * @apiParam {ObjectId} customerId Must be placed as QueryParam
+     * @apiParam {string} [logo]
+     * @apiParam {string} name
+     * @apiParam {string} [adress]
+     * @apiParam {tickets[]} tickets._id
+     * @apiParam {number} phone
+     * @apiParam {string} email
+     * @apiParam {string} password
+     * @apiParam {string} workArea
+     * @apiParam {ObjectId} companyId
      *
      * @apiExample Example usage:
-     * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
+     * http://31.220.52.51:3000:3000/api/v1/customers/5b6db13e09d62f219495a7dd
      *
      * @apiParamExample {json} Request-Example:
-     * { "lastName": "lastname21","books": [ "5ad3c1d6d4f5791f80c86744" ] }
+     * { "phone":"2224444" }
      *
      * @apiSuccessExample {json} Success-Response:
-     * { "data": { "createdAt": "2018-07-29T15:07:59.022Z", "updatedAt": "2018-07-29T15:07:59.022Z", "firstName": "user501", "lastName": "lastname21", "username": "username501", "email": "demo_user@a.com", "password": "5636", "posts": [ "5abcedbbfb5dfb236c199e81", "5abcededfb5dfb236c199e83" ], "books": [ "5ad3c175d4f5791f80c86742", "5ad3c1d6d4f5791f80c86744" ], "_id": "5b5dd84f7c124a2554381c90", "__v": 0 } }
+     * { "data": true }
      */
     update(req, res) {
         const _id = req.params.customerId;
@@ -172,16 +172,16 @@ class CustomersRouter {
         });
     }
     /**
-     * @api {DELETE} /customers/:_id Request  Deleted
+     * @api {DELETE} /customers/:customerId Request  Deleted
      * @apiVersion  0.1.0
      * @apiName deleteByToken
-     * @apiGroup Users
+     * @apiGroup Customers
      *
      *
-     * @apiParam {ObjectId} _id Must be placed as QueryParam
+     * @apiParam {ObjectId} customerId Must be placed as QueryParam
      *
      * @apiExample Example usage:
-     * https://cesarapp12.herokuapp.com/api/v1/users/5a9c4bb05e46d22f64abc15a
+     * http://31.220.52.51:3000/api/v1/customers/5b69b23777093a04244fae68
      *
      * @apiSuccessExample {json} Success-Response:
      * {"data":true}
