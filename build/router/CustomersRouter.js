@@ -196,6 +196,24 @@ class CustomersRouter {
             res.status(500).json({ error });
         });
     }
+    /**
+     * @api {POST} /customers/uploadImg Request Upload Logo
+     * @apiVersion  0.1.0
+     * @apiName post/Upload photo
+     * @apiGroup Customers
+     * @apiDescription
+     * Se debe enviar la imagen con form-data y con key imagen1
+     * La imagen se guarda en http://31.220.52.51:3000/Nombre.png
+     *
+     * @apiparam {File} imagen1 Form-based File Upload in HTML.
+     *
+     * @apiParamExample {json} Request-Example:
+     * { "imagen1":"File" }
+     *
+     *
+     * @apiSuccessExample {json} Success-Response Created User:
+     * { "data": "build/public/LOGO.png" }
+     */
     uploadFile(req, res) {
         const storage = multer.diskStorage({
             destination: "./build/public",

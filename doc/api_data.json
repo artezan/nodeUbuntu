@@ -1049,6 +1049,51 @@
     ]
   },
   {
+    "type": "POST",
+    "url": "/customers/uploadImg",
+    "title": "Request Upload Logo",
+    "version": "0.1.0",
+    "name": "post_Upload_photo",
+    "group": "Customers",
+    "description": "<p>Se debe enviar la imagen con form-data y con key imagen1 La imagen se guarda en http://31.220.52.51:3000/Nombre.png</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "File",
+            "optional": false,
+            "field": "imagen1",
+            "description": "<p>Form-based File Upload in HTML.</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Request-Example:",
+          "content": "{ \"imagen1\":\"File\" }",
+          "type": "json"
+        }
+      ]
+    },
+    "success": {
+      "examples": [
+        {
+          "title": "Success-Response Created User:",
+          "content": "{ \"data\": \"build/public/LOGO.png\" }",
+          "type": "json"
+        }
+      ]
+    },
+    "filename": "src/router/CustomersRouter.ts",
+    "groupTitle": "Customers",
+    "sampleRequest": [
+      {
+        "url": "http://31.220.52.51:3000/api/v1/customers/uploadImg"
+      }
+    ]
+  },
+  {
     "type": "PUT",
     "url": "/customers/:customerId",
     "title": "Request Update",
