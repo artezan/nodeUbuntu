@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Consultant_1 = require("../models/Consultant");
+const base64 = require("base-64");
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} timestamp
@@ -65,6 +66,18 @@ class ConsultantRouter {
         const consultantId = req.params.consultantId;
         Consultant_1.default.findById(consultantId)
             .populate("tickets")
+            .then(data => {
+            res.status(200).json({ data });
+        })
+            .catch(error => {
+            res.status(500).json({ error });
+        });
+    }
+    byPassword(req, res) {
+        const strDecode = base64.decode((req.params.base64));
+        const name = strDecode.substring(0, strDecode.indexOf(":"));
+        const password = strDecode.substring(strDecode.indexOf(":") + 1, strDecode.length);
+        Consultant_1.default.find({ password: password, name: name })
             .then(data => {
             res.status(200).json({ data });
         })
@@ -176,6 +189,7 @@ class ConsultantRouter {
     routes() {
         this.router.get("/bycompanyid/:companyId", this.all);
         this.router.get("/byconsultantid/:consultantId", this.oneById);
+        this.router.get("/byconsultantpassword/:base64", this.byPassword);
         this.router.post("/", this.create);
         this.router.put("/:consultantId", this.update);
         this.router.delete("/:consultantId", this.delete);

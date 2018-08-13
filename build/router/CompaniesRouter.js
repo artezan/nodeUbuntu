@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Company_1 = require("../models/Company");
+const base64 = require("base-64");
 /**
  * @apiDefine CompanyResponseParams
  * @apiSuccess {string} name
@@ -37,11 +38,11 @@ class CompaniesRouter {
     /**
      * @api {GET} /companies/:companyId Request by Object Id
      * @apiVersion  0.1.0
-     * @apiName getById
+     * @apiName getByNameAndPassword
      * @apiGroup Company
      *
      *
-     * @apiParam {ObjectId} companyId Must be provided as QueryParam
+     * @apiParam {ObjectId} b64(name:password) Must be provided as QueryParam
      *
      * @apiExample Example usage:
      * http://31.220.52.51:3000/api/v1/companies/5b69b23777093a04244fae68/
@@ -54,8 +55,10 @@ class CompaniesRouter {
      * { "data": { "timestamp": "2018-08-07T14:52:39.369Z", "_id": "5b69b23777093a04244fae68", "name": "Compañia 1", "__v": 0 } }
      */
     oneById(req, res) {
-        const companyId = req.params.companyId;
-        Company_1.default.findById(companyId)
+        const strDecode = base64.decode((req.params.nameCompany));
+        const name = strDecode.substring(0, strDecode.indexOf(":"));
+        const password = strDecode.substring(strDecode.indexOf(":") + 1, strDecode.length);
+        Company_1.default.find({ password: password, name: name })
             .then(data => {
             res.status(200).json({ data });
         })
@@ -122,7 +125,7 @@ class CompaniesRouter {
         });
     }
     /**
-     * @api {DELETE} /company/:companyId Request  Deleted
+     * @api {DELETE} /companies/:companyId Request  Deleted
      * @apiVersion  0.1.0
      * @apiName deleteByToken
      * @apiGroup Company
@@ -149,7 +152,7 @@ class CompaniesRouter {
     // set up our routes
     routes() {
         this.router.get("/", this.all);
-        this.router.get("/:companyId", this.oneById);
+        this.router.get("/:nameCompany", this.oneById);
         this.router.post("/", this.createComapy);
         this.router.put("/:companyId", this.update);
         this.router.delete("/:companyId", this.delete);

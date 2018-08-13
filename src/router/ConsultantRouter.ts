@@ -2,6 +2,8 @@ import { Request, Response, Router } from "express";
 import { ObjectId } from "../../node_modules/@types/bson";
 import Consultant, { IConsultant } from "../models/Consultant";
 import Ticket, { ITicket } from "../models/Ticket";
+import * as base64  from "base-64";
+
 /**
  * @apiDefine ConsultantResponseParams
  * @apiSuccess {Date} timestamp
@@ -76,6 +78,19 @@ export class ConsultantRouter {
         res.status(500).json({ error });
       });
   }
+  public byPassword(req: Request, res: Response): void {
+    const strDecode: string =  base64.decode((req.params.base64));
+    const name = strDecode.substring(0, strDecode.indexOf(":"));
+    const password = strDecode.substring(strDecode.indexOf(":") + 1, strDecode.length );
+
+    Consultant.find({password: password, name: name})
+        .then(data => {
+            res.status(200).json({ data });
+        })
+        .catch(error => {
+            res.status(500).json({ error });
+        });
+}
   /**
    * @api {POST} /consultants/ Request New
    * @apiVersion  0.1.0
@@ -187,6 +202,7 @@ export class ConsultantRouter {
   public routes() {
     this.router.get("/bycompanyid/:companyId", this.all);
     this.router.get("/byconsultantid/:consultantId", this.oneById);
+    this.router.get("/byconsultantpassword/:base64", this.byPassword);
     this.router.post("/", this.create);
     this.router.put("/:consultantId", this.update);
     this.router.delete("/:consultantId", this.delete);

@@ -4,6 +4,7 @@ const express_1 = require("express");
 const Customer_1 = require("../models/Customer");
 const multer = require("multer");
 const path = require("path");
+const base64 = require("base-64");
 /**
  * @apiDefine CustomersResponseParams
  * @apiSuccess {Date} timestamp
@@ -77,6 +78,18 @@ class CustomersRouter {
             res.status(500).json({ error });
         });
     }
+    byPassword(req, res) {
+        const strDecode = base64.decode(req.params.base64);
+        const name = strDecode.substring(0, strDecode.indexOf(":"));
+        const password = strDecode.substring(strDecode.indexOf(":") + 1, strDecode.length);
+        Customer_1.default.find({ password: password, name: name })
+            .then(data => {
+            res.status(200).json({ data });
+        })
+            .catch(error => {
+            res.status(500).json({ error });
+        });
+    }
     /**
      * @api {POST} /customers/ Request New
      * @apiVersion  0.1.0
@@ -123,7 +136,7 @@ class CustomersRouter {
             email,
             workArea,
             password,
-            companyId
+            companyId,
         });
         customer
             .save()
@@ -222,25 +235,27 @@ class CustomersRouter {
                 cb(
                 // tslint:disable-next-line:no-null-keyword
                 null, 
-                /* file.fieldname + "-" +  */ path.parse(file.originalname).name + path.extname(file.originalname));
-            }
+                /* file.fieldname + "-" +  */ path.parse(file.originalname).name +
+                    path.extname(file.originalname));
+            },
         });
         const upload = multer({
-            storage
+            storage,
         }).single("imagen1");
-        upload(req, res, ((err) => {
+        upload(req, res, err => {
             if (err) {
                 res.status(500).json({ err });
             }
             else {
                 res.status(200).json({ data: req.file.path });
             }
-        }));
+        });
     }
     // set up our routes
     routes() {
         this.router.get("/bycompanyid/:companyId", this.all);
         this.router.get("/bycustomerid/:customerId", this.oneById);
+        this.router.get("/byconsultantpassword/:base64", this.byPassword);
         this.router.post("/", this.create);
         this.router.put("/:customerId", this.update);
         this.router.delete("/:customerId", this.delete);

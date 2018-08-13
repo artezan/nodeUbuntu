@@ -1,6 +1,7 @@
 import { model, Schema, Document } from "mongoose";
 interface ICompany extends Document {
     name: any;
+    password: any;
     timestamp: Date;
 }
 const CompanySchema: Schema = new Schema({
@@ -9,6 +10,10 @@ const CompanySchema: Schema = new Schema({
         default: Date.now
     },
     name: {
+        type: String,
+        required: true
+    },
+    password: {
         type: String,
         required: true
     },
