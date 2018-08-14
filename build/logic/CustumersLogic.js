@@ -15,8 +15,9 @@ class CustmersLogic {
                 customer.tickets.splice(indexFind, 1);
                 customer.tickets.push(ticket);
             }
-            customer.save();
-            this.calculateTotalHours(customer._id);
+            customer.save().then(() => {
+                this.calculateTotalHours(customer._id);
+            });
         })
             .catch();
     }
@@ -27,8 +28,9 @@ class CustmersLogic {
             const indexFind = oldCustomer.tickets.findIndex(t => new mongodb_1.ObjectId(t._id).toString() === new mongodb_1.ObjectId(ticket._id).toString());
             if (indexFind !== -1) {
                 oldCustomer.tickets.splice(indexFind, 1);
-                oldCustomer.save();
-                this.calculateTotalHours(oldCustomer._id);
+                oldCustomer.save().then(() => {
+                    this.calculateTotalHours(oldCustomer._id);
+                });
             }
         })
             .catch();
@@ -38,8 +40,9 @@ class CustmersLogic {
             const indexFind = newCustomer.tickets.findIndex(t => new mongodb_1.ObjectId(t._id).toString() === new mongodb_1.ObjectId(ticket._id).toString());
             if (indexFind === -1) {
                 newCustomer.tickets.push(ticket);
-                newCustomer.save();
-                this.calculateTotalHours(newCustomer._id);
+                newCustomer.save().then(() => {
+                    this.calculateTotalHours(newCustomer._id);
+                });
             }
         })
             .catch();
@@ -50,8 +53,9 @@ class CustmersLogic {
                 const indexFind = customer.tickets.findIndex(t => new mongodb_1.ObjectId(t._id).toString() === ticketId);
                 if (indexFind !== -1) {
                     customer.tickets.splice(indexFind, 1);
-                    customer.save();
-                    this.calculateTotalHours(customer._id);
+                    customer.save().then(() => {
+                        this.calculateTotalHours(customer._id);
+                    });
                 }
             });
         });

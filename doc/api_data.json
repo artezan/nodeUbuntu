@@ -1,7 +1,7 @@
 [
   {
     "type": "DELETE",
-    "url": "/company/:companyId",
+    "url": "/companies/:companyId",
     "title": "Request  Deleted",
     "version": "0.1.0",
     "name": "deleteByToken",
@@ -39,7 +39,7 @@
     "groupTitle": "Company",
     "sampleRequest": [
       {
-        "url": "http://31.220.52.51:3000/api/v1/company/:companyId"
+        "url": "http://31.220.52.51:3000/api/v1/companies/:companyId"
       }
     ]
   },
@@ -72,7 +72,7 @@
     "url": "/companies/:companyId",
     "title": "Request by Object Id",
     "version": "0.1.0",
-    "name": "getById",
+    "name": "getByNameAndPassword",
     "group": "Company",
     "parameter": {
       "fields": {
@@ -81,8 +81,8 @@
             "group": "Parameter",
             "type": "ObjectId",
             "optional": false,
-            "field": "companyId",
-            "description": "<p>Must be provided as QueryParam</p>"
+            "field": "b64",
+            "description": "<p>(name:password) Must be provided as QueryParam</p>"
           }
         ]
       }
@@ -1703,7 +1703,7 @@
   },
   {
     "type": "POST",
-    "url": "/tickets/",
+    "url": "/tickets/newticket/",
     "title": "Request New",
     "version": "0.1.0",
     "name": "post",
@@ -1857,7 +1857,7 @@
     "groupTitle": "Ticket",
     "sampleRequest": [
       {
-        "url": "http://31.220.52.51:3000/api/v1/tickets/"
+        "url": "http://31.220.52.51:3000/api/v1/tickets/newticket/"
       }
     ]
   },

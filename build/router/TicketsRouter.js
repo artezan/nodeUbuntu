@@ -86,7 +86,7 @@ class TicketsRouter {
           });*/
     }
     /**
-     * @api {POST} /tickets/ Request New
+     * @api {POST} /tickets/newticket/ Request New
      * @apiVersion  0.1.0
      * @apiName post
      * @apiGroup Ticket
