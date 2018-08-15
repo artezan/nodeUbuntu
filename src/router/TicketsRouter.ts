@@ -269,7 +269,7 @@ export class TicketsRouter {
       });
     }
     if (newConsultant && oldConsultant && newCustomer && oldCustomer) {
-      Ticket.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
+      Ticket.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant, customer: newCustomer  }).then(() => {
         Ticket.findById(ticketId).then(ticket => {
           ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
           CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);

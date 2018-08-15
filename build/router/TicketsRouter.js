@@ -255,7 +255,7 @@ class TicketsRouter {
             });
         }
         if (newConsultant && oldConsultant && newCustomer && oldCustomer) {
-            Ticket_1.default.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant }).then(() => {
+            Ticket_1.default.findByIdAndUpdate({ _id: ticketId }, { consultant: newConsultant, customer: newCustomer }).then(() => {
                 Ticket_1.default.findById(ticketId).then(ticket => {
                     ConsultantsLogic_1.ConsultantsLogic.Instance().changeTicketToConsultant(ticket, newConsultant, oldConsultant);
                     CustumersLogic_1.CustmersLogic.Instance().changeTicketToCustomer(ticket, newCustomer, oldCustomer);
