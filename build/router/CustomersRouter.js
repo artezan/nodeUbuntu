@@ -70,7 +70,8 @@ class CustomersRouter {
     oneById(req, res) {
         const customerId = req.params.customerId;
         Customer_1.default.findById(customerId)
-            .populate("tickets")
+            // .populate("tickets")
+            .populate({ path: "tickets", populate: { path: "consultant" } })
             .then(data => {
             res.status(200).json({ data });
         })

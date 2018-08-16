@@ -79,7 +79,8 @@ export class CustomersRouter {
     const customerId: string = req.params.customerId;
 
     Customer.findById(customerId)
-      .populate("tickets")
+      // .populate("tickets")
+      .populate({path: "tickets", populate: {path: "consultant" }})
       .then(data => {
         res.status(200).json({ data });
       })

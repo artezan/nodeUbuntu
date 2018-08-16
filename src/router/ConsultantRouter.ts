@@ -70,7 +70,8 @@ export class ConsultantRouter {
     const consultantId: string = req.params.consultantId;
 
     Consultant.findById(consultantId)
-      .populate("tickets")
+      // .populate("tickets")
+      .populate({path: "tickets", populate: {path: "customer" }})
       .then(data => {
         res.status(200).json({ data });
       })

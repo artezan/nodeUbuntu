@@ -65,7 +65,8 @@ class ConsultantRouter {
     oneById(req, res) {
         const consultantId = req.params.consultantId;
         Consultant_1.default.findById(consultantId)
-            .populate("tickets")
+            // .populate("tickets")
+            .populate({ path: "tickets", populate: { path: "customer" } })
             .then(data => {
             res.status(200).json({ data });
         })
