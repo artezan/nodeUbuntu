@@ -275,7 +275,7 @@ export class CustomersRouter {
   public routes() {
     this.router.get("/bycompanyid/:companyId", this.all);
     this.router.get("/bycustomerid/:customerId", this.oneById);
-    this.router.get("/byconsultantpassword/:base64", this.byPassword);
+    this.router.get("/bycustomerpassword/:base64", this.byPassword);
     this.router.post("/", this.create);
     this.router.put("/:customerId", this.update);
     this.router.delete("/:customerId", this.delete);
