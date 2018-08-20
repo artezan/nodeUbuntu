@@ -3,6 +3,7 @@ import Ticket from "../models/Ticket";
 import { CustmersLogic } from "../logic/CustumersLogic";
 import { ConsultantsLogic } from "../logic/ConsultantsLogic";
 import Post from "../models/Post";
+import { IO } from "../app";
 /**
  * @apiDefine PostResponseParams
  * @apiSuccess {Date} timestamp
@@ -115,6 +116,8 @@ export class PostsRouter {
     post
       .save()
       .then(data => {
+        // emit
+        IO.emit("NEW_POST", data);
         res.status(201).json({ data });
       })
       .catch(error => {

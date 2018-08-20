@@ -7,11 +7,15 @@ debug("ts-express:server");
 const port = normalizePort(process.env.PORT || 3000);
 server_1.default.set("port", port);
 console.log(`Server listening on port ${port}`);
-// algo 2
-const server = http.createServer(server_1.default);
-server.listen(port);
-server.on("error", onError);
-server.on("listening", onListening);
+/**
+ * Create HTTP server.
+ */
+exports.server = http.createServer(server_1.default);
+// Socket.io for real time communication
+exports.IO = require("socket.io").listen(exports.server);
+exports.server.listen(port);
+exports.server.on("error", onError);
+exports.server.on("listening", onListening);
 function normalizePort(val) {
     const port = typeof val === "string" ? parseInt(val, 10) : val;
     if (isNaN(port)) {
@@ -45,8 +49,14 @@ function onError(error) {
     }
 }
 function onListening() {
-    const addr = server.address();
+    const addr = exports.server.address();
     const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
     debug(`Listening on ${bind}`);
 }
+/**
+ * Socket events
+ */
+exports.IO.sockets.on("connection", function (socket) {
+    console.log("Socket connected");
+});
 //# sourceMappingURL=app.js.map

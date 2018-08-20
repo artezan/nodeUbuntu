@@ -2,6 +2,8 @@ import Consultant, { IConsultant } from "../models/Consultant";
 import { Types } from "mongoose";
 import { ObjectId } from "mongodb";
 import Ticket, { ITicket } from "../models/Ticket";
+import * as base64  from "base-64";
+
 
 export class ConsultantsLogic {
   public static Instance = function(): ConsultantsLogic {
@@ -11,6 +13,34 @@ export class ConsultantsLogic {
       return (this._instance = new this());
     }
   };
+  // base64 nombre:pass
+  public async checkConsultant(base64Input): Promise<boolean> {
+    const strDecode: string = base64.decode(base64Input);
+    const name = strDecode.substring(0, strDecode.indexOf(":"));
+    const password = strDecode.substring(
+      strDecode.indexOf(":") + 1,
+      strDecode.length,
+    );
+    // crea promise con respuesta si encuentra o no
+    const promise = new Promise<boolean>((resolve, reject) => {
+      // busca la info
+      try {
+        Consultant.find({ password: password, name: name })
+          .then(data => {
+            if (data.length > 0) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          })
+          .catch(error => {});
+      } catch (error) {
+        // error
+      }
+    });
+    const result = await promise;
+    return result;
+  }
   public addTicketToConsultant(ticket: ITicket, consultantId): void {
     Consultant.findById(consultantId)
       .populate("tickets")

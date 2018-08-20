@@ -10,6 +10,7 @@ interface IPost extends Document {
   custumer: ICustomer;
   consultant: IConsultant;
   isByCustomer: boolean;
+  seen: boolean;
 }
 const PostSchema: Schema = new Schema({
   timestamp: {
@@ -37,6 +38,10 @@ const PostSchema: Schema = new Schema({
   },
   isByCustomer: {
     type: Boolean,
+  },
+  seen: {
+    type: Boolean,
+    default: false
   }
 });
 

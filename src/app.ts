@@ -9,8 +9,12 @@ const port = normalizePort(process.env.PORT || 3000);
 Server.set("port", port);
 
 console.log(`Server listening on port ${port}`);
-// algo 2
-const server = http.createServer(Server);
+/**
+ * Create HTTP server.
+ */
+export const server = http.createServer(Server);
+// Socket.io for real time communication
+export const IO = require("socket.io").listen(server);
 server.listen(port);
 server.on("error", onError);
 server.on("listening", onListening);
@@ -52,3 +56,9 @@ function onListening(): void {
   const bind = typeof addr === "string" ? `pipe ${addr}` : `port ${addr.port}`;
   debug(`Listening on ${bind}`);
 }
+/**
+ * Socket events
+ */
+IO.sockets.on("connection", function(socket) {
+  console.log("Socket connected");
+});

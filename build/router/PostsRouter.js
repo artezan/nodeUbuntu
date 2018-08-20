@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const Ticket_1 = require("../models/Ticket");
 const Post_1 = require("../models/Post");
+const app_1 = require("../app");
 /**
  * @apiDefine PostResponseParams
  * @apiSuccess {Date} timestamp
@@ -106,6 +107,8 @@ class PostsRouter {
         post
             .save()
             .then(data => {
+            // emit
+            app_1.IO.emit("NEW_POST", data);
             res.status(201).json({ data });
         })
             .catch(error => {

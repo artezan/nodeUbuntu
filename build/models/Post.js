@@ -27,6 +27,10 @@ const PostSchema = new mongoose_1.Schema({
     },
     isByCustomer: {
         type: Boolean,
+    },
+    seen: {
+        type: Boolean,
+        default: false
     }
 });
 exports.default = mongoose_1.model("Post", PostSchema);

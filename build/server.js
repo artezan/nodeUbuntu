@@ -1,4 +1,12 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const bodyParser = require("body-parser");
 const compression = require("compression");
@@ -14,6 +22,9 @@ const CustomersRouter_1 = require("./router/CustomersRouter");
 const ConsultantRouter_1 = require("./router/ConsultantRouter");
 const CompaniesRouter_1 = require("./router/CompaniesRouter");
 const PostsRouter_1 = require("./router/PostsRouter");
+const CustumersLogic_1 = require("./logic/CustumersLogic");
+const ConsultantsLogic_1 = require("./logic/ConsultantsLogic");
+const CompaniesLogic_1 = require("./logic/CompaniesLogic");
 class Server {
     constructor() {
         this.ticketsRouter = new TicketsRouter_1.TicketsRouter();
@@ -58,6 +69,39 @@ class Server {
     // application routes
     routes() {
         const router = express.Router();
+        // seguridad por credenciales
+        this.app.use((req, res, next) => __awaiter(this, void 0, void 0, function* () {
+            console.log(req.headers.authorization);
+            // pide en el header user y authorization
+            if (!req.headers.authorization && !req.headers.user) {
+                return res.status(403).json({ error: "No credentials sent!" });
+            }
+            else {
+                // cliente
+                if (req.headers.user === "customer") {
+                    const isFind = yield CustumersLogic_1.CustmersLogic.Instance().checkCustomer(req.headers.authorization);
+                    if (!isFind) {
+                        return res.status(403).json({ error: "No credentials match!" });
+                    } // consultor
+                }
+                else if (req.headers.user === "consultant") {
+                    const isFind = yield ConsultantsLogic_1.ConsultantsLogic.Instance().checkConsultant(req.headers.authorization);
+                    if (!isFind) {
+                        return res.status(403).json({ error: "No credentials match!" });
+                    } // company
+                }
+                else if (req.headers.user === "company") {
+                    const isFind = yield CompaniesLogic_1.CompaniesLogic.Instance().checkCompany(req.headers.authorization);
+                    if (!isFind) {
+                        return res.status(403).json({ error: "No credentials match!" });
+                    } // no user
+                }
+                else {
+                    return res.status(403).json({ error: "No credentials match!" });
+                }
+            }
+            next();
+        }));
         this.app.use("/", router);
         this.app.use("/api/v1/companies", this.companiesRouter.router);
         this.app.use("/api/v1/consultants", this.consultantsRouter.router);

@@ -12,6 +12,9 @@ import { CustomersRouter } from "./router/CustomersRouter";
 import { ConsultantRouter } from "./router/ConsultantRouter";
 import { CompaniesRouter } from "./router/CompaniesRouter";
 import { PostsRouter } from "./router/PostsRouter";
+import { CustmersLogic } from "./logic/CustumersLogic";
+import { ConsultantsLogic } from "./logic/ConsultantsLogic";
+import { CompaniesLogic } from "./logic/CompaniesLogic";
 
 class Server {
   public ticketsRouter = new TicketsRouter();
@@ -56,12 +59,12 @@ class Server {
       res.header("Access-Control-Allow-Origin", "*");
       res.header(
         "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS"
+        "GET, POST, PUT, DELETE, OPTIONS",
       );
       // tslint:disable-next-line:max-line-length
       res.header(
         "Access-Control-Allow-Headers",
-        "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials"
+        "Origin, X-Requested-With, Content-Type, Accept, Authorization, Access-Control-Allow-Credentials",
       );
       res.header("Access-Control-Allow-Credentials", "true");
       next();
@@ -71,7 +74,41 @@ class Server {
   // application routes
   public routes(): void {
     const router: express.Router = express.Router();
-
+    // seguridad por credenciales
+    this.app.use(async (req, res, next) => {
+      console.log(req.headers.authorization);
+      // pide en el header user y authorization
+      if (!req.headers.authorization && !req.headers.user) {
+        return res.status(403).json({ error: "No credentials sent!" });
+      } else {
+        // cliente
+        if (req.headers.user === "customer") {
+          const isFind = await CustmersLogic.Instance().checkCustomer(
+            req.headers.authorization,
+          );
+          if (!isFind) {
+            return res.status(403).json({ error: "No credentials match!" });
+          } // consultor
+        } else if (req.headers.user === "consultant") {
+          const isFind = await ConsultantsLogic.Instance().checkConsultant(
+            req.headers.authorization,
+          );
+          if (!isFind) {
+            return res.status(403).json({ error: "No credentials match!" });
+          } // company
+        } else if (req.headers.user === "company") {
+          const isFind = await CompaniesLogic.Instance().checkCompany(
+            req.headers.authorization,
+          );
+          if (!isFind) {
+            return res.status(403).json({ error: "No credentials match!" });
+          } // no user
+        } else {
+          return res.status(403).json({ error: "No credentials match!" });
+        }
+      }
+      next();
+    });
     this.app.use("/", router);
     this.app.use("/api/v1/companies", this.companiesRouter.router);
     this.app.use("/api/v1/consultants", this.consultantsRouter.router);
