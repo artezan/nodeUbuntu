@@ -55,7 +55,7 @@ class CompaniesRouter {
      * { "data": { "timestamp": "2018-08-07T14:52:39.369Z", "_id": "5b69b23777093a04244fae68", "name": "Compañia 1", "__v": 0 } }
      */
     oneById(req, res) {
-        const strDecode = base64.decode((req.params.nameCompany));
+        const strDecode = base64.decode(req.params.nameCompany);
         const name = strDecode.substring(0, strDecode.indexOf(":"));
         const password = strDecode.substring(strDecode.indexOf(":") + 1, strDecode.length);
         Company_1.default.find({ password: password, name: name })
@@ -85,10 +85,13 @@ class CompaniesRouter {
      */
     createComapy(req, res) {
         const name = req.body.name;
+        const password = req.body.password;
         const company = new Company_1.default({
-            name
+            name,
+            password,
         });
-        company.save()
+        company
+            .save()
             .then(data => {
             res.status(201).json({ data });
         })
